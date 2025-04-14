@@ -54,7 +54,7 @@ export default function EditBlogPost(props: { params: Promise<{ id: string }> })
   
   const fetchBlogPost = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/blogs/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blogs/${id}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
@@ -157,7 +157,7 @@ export default function EditBlogPost(props: { params: Promise<{ id: string }> })
         formDataToSend.append('deleteContentImages', JSON.stringify(deletedImages));
       }
       
-      const response = await fetch(`http://localhost:5000/api/blogs/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blogs/${id}`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,

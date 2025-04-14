@@ -122,7 +122,7 @@ export default function BlogPostPage({ params }: { params: any }) {
     const fetchBlogPost = async () => {
       try {
         // Use the correct API endpoint format based on your backend
-        const response = await fetch(`http://localhost:5000/api/blogs`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blogs`);
         if (!response.ok) throw new Error('Failed to fetch blog posts');
         
         const data = await response.json();

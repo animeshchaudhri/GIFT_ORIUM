@@ -71,7 +71,7 @@ export default function UsersPage() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/api/users', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
@@ -170,7 +170,7 @@ export default function UsersPage() {
         formDataToSend.append('avatar', avatar);
       }
 
-      const response = await fetch(`http://localhost:5000/api/users/${selectedUser._id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${selectedUser._id}`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -205,7 +205,7 @@ export default function UsersPage() {
   const deleteUser = async (id: string) => {
     try {
       setDeleteConfirmId(null);
-      const response = await fetch(`http://localhost:5000/api/users/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -246,7 +246,7 @@ export default function UsersPage() {
         formDataToSend.append('avatar', avatar);
       }
 
-      const response = await fetch('http://localhost:5000/api/users', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,

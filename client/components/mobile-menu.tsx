@@ -23,27 +23,46 @@ export default function MobileMenu() {
   }
 
   const menuItems = [
-    { name: "Home", link: "#", hasSubmenu: false },
+    { name: "Home", link: "/", hasSubmenu: false },
     {
       name: "Categories",
-      link: "#",
+      link: "/products",
       hasSubmenu: true,
-      submenu: ["Birthday Gifts", "Anniversary Gifts", "Wedding Gifts", "Corporate Gifts"],
+      submenu: [
+        { name: "Flowers", link: "/products?category=flowers" },
+        { name: "Keychains", link: "/products?category=keychains" },
+        { name: "Religious gifts", link: "/products?category=religious-gifts" },
+        { name: "Beauty Gifts", link: "/products?category=beauty-gifts" },
+        { name: "Home Decor", link: "/products?category=home-decor" },
+        { name: "Toys & Games", link: "/products?category=toys-games" },
+        { name: "Kitchen & Dining", link: "/products?category=kitchen-dining" },
+        { name: "Premium Gifts", link: "/products?category=premium-gifts" }
+      ],
     },
     {
       name: "Shop",
-      link: "#",
+      link: "/products",
       hasSubmenu: true,
-      submenu: ["New Arrivals", "Best Sellers", "Sale Items", "Gift Cards"],
+      submenu: [
+        { name: "New Arrivals", link: "/products?filter=new" },
+        { name: "Best Sellers", link: "/products?filter=bestsellers" },
+        { name: "Sale Items", link: "/products?filter=sale" },
+        { name: "Gift Cards", link: "/products?type=giftcards" }
+      ],
     },
     {
       name: "Pages",
       link: "#",
       hasSubmenu: true,
-      submenu: ["About Us", "Contact Us", "FAQ", "Terms & Conditions"],
+      submenu: [
+        { name: "About Us", link: "/about" },
+        { name: "Contact Us", link: "/contact" },
+        { name: "FAQ", link: "/faq" },
+        { name: "Terms & Conditions", link: "/terms" }
+      ],
     },
-    { name: "Blog", link: "#", hasSubmenu: false },
-    { name: "Contact", link: "#", hasSubmenu: false },
+    { name: "Blog", link: "/blog", hasSubmenu: false },
+    { name: "Contact", link: "/contact", hasSubmenu: false },
   ]
 
   return (
@@ -88,11 +107,11 @@ export default function MobileMenu() {
                           {item.submenu?.map((subItem, subIndex) => (
                             <li key={subIndex}>
                               <Link
-                                href="#"
+                                href={typeof subItem === 'string' ? '#' : subItem.link}
                                 className="block py-1 text-gray-600 hover:text-pink-500"
                                 onClick={toggleMenu}
                               >
-                                {subItem}
+                                {typeof subItem === 'string' ? subItem : subItem.name}
                               </Link>
                             </li>
                           ))}

@@ -70,7 +70,7 @@ export default function ProductsPage() {
         throw new Error('Authentication required');
       }
 
-      const response = await fetch('http://localhost:5000/api/products', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -185,7 +185,7 @@ export default function ProductsPage() {
         const formData = new FormData();
         formData.append('images', file);
 
-        const response = await fetch('http://localhost:5000/api/products/upload', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products/upload`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -270,8 +270,8 @@ export default function ProductsPage() {
       }
 
       const url = editingProduct
-        ? `http://localhost:5000/api/products/${editingProduct._id}`
-        : 'http://localhost:5000/api/products';
+        ? `${process.env.NEXT_PUBLIC_API_URL}/api/products/${editingProduct._id}`
+        : `${process.env.NEXT_PUBLIC_API_URL}/api/products`;
 
       const response = await fetch(url, {
         method: editingProduct ? 'PATCH' : 'POST',
@@ -306,7 +306,7 @@ export default function ProductsPage() {
   const handleDelete = async (id: string) => {
     try {
       setDeleteConfirmId(null);
-      const response = await fetch(`http://localhost:5000/api/products/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,

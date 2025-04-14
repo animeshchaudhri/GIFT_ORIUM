@@ -34,7 +34,7 @@ export default function CheckoutPage() {
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/cart', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/cart`, {
           method: 'GET',
           headers: {
             authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -77,7 +77,7 @@ export default function CheckoutPage() {
     setProcessing(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/orders', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -185,7 +185,7 @@ export default function CheckoutPage() {
                 <div key={index} className="flex justify-between">
                   <span>{item.product.name} x {item.quantity}</span>
                   <span>
-                    ${((item.product.discountPrice || item.product.price) * item.quantity).toFixed(2)}
+                  ₹{((item.product.discountPrice || item.product.price) * item.quantity).toFixed(2)}
                   </span>
                 </div>
               ))}
@@ -194,7 +194,7 @@ export default function CheckoutPage() {
                 <div className="flex justify-between font-bold">
                   <span>Total</span>
                   <span>
-                    ${cartItems.reduce((total, item) => {
+                  ₹{cartItems.reduce((total, item) => {
                       const price = item.product.discountPrice || item.product.price;
                       return total + (price * item.quantity);
                     }, 0).toFixed(2)}

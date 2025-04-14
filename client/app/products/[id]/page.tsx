@@ -40,12 +40,12 @@ interface Product {
 }
 
 export default function ProductDetails({ params }: { params: Promise<{ id: string }> }) {
-  const router = useRouter();
-  const [product, setProduct] = useState<Product | null>(null);
+  const router = useRouter();  const [product, setProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedImage, setSelectedImage] = useState('');
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loadingReviews, setLoadingReviews] = useState(true);
@@ -56,8 +56,7 @@ export default function ProductDetails({ params }: { params: Promise<{ id: strin
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/products/${id}`);
-        if (!response.ok) {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products/${id}`);        if (!response.ok) {
           toast.error('Failed to load product');
           //throw new Error('Failed to load product');
         }
@@ -66,8 +65,9 @@ export default function ProductDetails({ params }: { params: Promise<{ id: strin
         setProduct(data);
         if (data.images && data.images.length > 0) {
           setSelectedImage(data.images[0]);
-        } else if ( data.imageUrl) {
-          setSelectedImage( data.imageUrl);
+          setSelectedImageIndex(0);
+        } else if (data.imageUrl) {
+          setSelectedImage(data.imageUrl);
         }
       } catch (err) {
         console.error(err);
@@ -88,7 +88,7 @@ export default function ProductDetails({ params }: { params: Promise<{ id: strin
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/testimonials?productId=${id}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/testimonials?productId=${id}`);
         if (!response.ok) throw new Error('Failed to load reviews');
         const data = await response.json();
         setReviews(data.data || []);
@@ -108,7 +108,7 @@ export default function ProductDetails({ params }: { params: Promise<{ id: strin
     try {
       if (!product) return;
       
-      const response = await fetch('http://localhost:5000/api/cart/add', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/cart/add`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -154,11 +154,26 @@ export default function ProductDetails({ params }: { params: Promise<{ id: strin
   const decreaseQuantity = () => {
     if (quantity > 1) setQuantity(quantity - 1);
   };
-
   const increaseQuantity = () => {
     if (product && quantity < product.stock) {
       setQuantity(quantity + 1);
     }
+  };
+
+  const nextImage = () => {
+    if (!product || !product.images || product.images.length <= 1) return;
+    
+    const newIndex = (selectedImageIndex + 1) % product.images.length;
+    setSelectedImageIndex(newIndex);
+    setSelectedImage(product.images[newIndex]);
+  };
+
+  const prevImage = () => {
+    if (!product || !product.images || product.images.length <= 1) return;
+    
+    const newIndex = (selectedImageIndex - 1 + product.images.length) % product.images.length;
+    setSelectedImageIndex(newIndex);
+    setSelectedImage(product.images[newIndex]);
   };
 
   const renderStars = (rating: number) => {
@@ -240,8 +255,7 @@ export default function ProductDetails({ params }: { params: Promise<{ id: strin
 
         <Card className="overflow-hidden bg-white shadow-lg rounded-xl">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
-            {/* Product Images */}
-            <div className="space-y-6">
+            {/* Product Images */}            <div className="space-y-6">
               {/* Main Image */}
               <div className="relative h-[500px] w-full rounded-xl overflow-hidden bg-gray-50 border">
                 <Image
@@ -252,6 +266,34 @@ export default function ProductDetails({ params }: { params: Promise<{ id: strin
                   sizes="(max-width: 768px) 100vw, 50vw"
                   priority
                 />
+                
+                {/* Left-right navigation arrows */}
+                {product?.images && product.images.length > 1 && (
+                  <>
+                    <button 
+                      onClick={prevImage}
+                      className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-75 hover:bg-opacity-100 rounded-full p-2 shadow-md transition-all hover:scale-110"
+                      aria-label="Previous image"
+                    >
+                      <ChevronRight className="h-6 w-6 transform rotate-180 text-gray-800" />
+                    </button>
+                    <button 
+                      onClick={nextImage}
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-75 hover:bg-opacity-100 rounded-full p-2 shadow-md transition-all hover:scale-110"
+                      aria-label="Next image"
+                    >
+                      <ChevronRight className="h-6 w-6 text-gray-800" />
+                    </button>
+                    <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1">
+                      {product.images.map((_, index) => (
+                        <div 
+                          key={index}
+                          className={`w-2 h-2 rounded-full ${selectedImageIndex === index ? 'bg-pink-500' : 'bg-gray-300'}`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
               
               {/* Thumbnail Gallery */}

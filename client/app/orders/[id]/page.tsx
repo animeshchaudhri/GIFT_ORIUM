@@ -70,7 +70,7 @@ export default function OrderDetailsPage() {
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/orders/${params.id}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/orders/${params.id}`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
           },
@@ -114,7 +114,7 @@ export default function OrderDetailsPage() {
 
     setIsSubmittingReview(true);
     try {
-      const response = await fetch('http://localhost:5000/api/testimonials', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/testimonials`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -276,11 +276,11 @@ export default function OrderDetailsPage() {
                 </div>
                 <div className="text-right">
                   <p className="font-medium">
-                    ${((item.product.discountPrice || item.product.price) * item.quantity).toFixed(2)}
+                  ₹{((item.product.discountPrice || item.product.price) * item.quantity).toFixed(2)}
                   </p>
                   {item.product.discountPrice && (
                     <p className="text-sm text-muted-foreground line-through">
-                      ${(item.product.price * item.quantity).toFixed(2)}
+                      ₹{(item.product.price * item.quantity).toFixed(2)}
                     </p>
                   )}
                 </div>
@@ -294,7 +294,7 @@ export default function OrderDetailsPage() {
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Subtotal</span>
-            <span>${order.totalAmount.toFixed(2)}</span>
+            <span>₹{order.totalAmount.toFixed(2)}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Shipping</span>
@@ -304,7 +304,7 @@ export default function OrderDetailsPage() {
             <span>Total</span>
             <div className="flex items-center gap-1">
               <CircleDollarSign className="h-5 w-5 text-green-600" />
-              <span>${order.totalAmount.toFixed(2)}</span>
+              <span>₹{order.totalAmount.toFixed(2)}</span>
             </div>
           </div>
         </div>

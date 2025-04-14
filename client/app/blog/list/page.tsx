@@ -33,7 +33,7 @@ export default function BlogListPage() {
   useEffect(() => {
     const fetchBlogPosts = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/blog');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog`);
         if (!response.ok) throw new Error('Failed to fetch blog posts');
         const data = await response.json();
         setPosts(Array.isArray(data) ? data : (data.data || []));

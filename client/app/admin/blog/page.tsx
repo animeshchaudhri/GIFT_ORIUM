@@ -38,7 +38,7 @@ export default function BlogManagementPage() {
 
   const fetchBlogPosts = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/blogs/all', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blogs/all`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -60,7 +60,7 @@ export default function BlogManagementPage() {
     if (!window.confirm('Are you sure you want to delete this blog post?')) return;
     
     try {
-      const response = await fetch(`http://localhost:5000/api/blogs/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blogs/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,

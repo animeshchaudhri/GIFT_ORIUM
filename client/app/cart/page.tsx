@@ -32,7 +32,7 @@ export default function CartPage() {
 
   const fetchCart = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/cart', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/cart`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -71,7 +71,7 @@ export default function CartPage() {
         return;
       }
 
-      const response = await fetch(`http://localhost:5000/api/cart/update/${cartItem.product._id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/cart/update/${cartItem.product._id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -98,7 +98,7 @@ export default function CartPage() {
       const cartItem = cartItems.find(item => item._id === itemId);
       if (!cartItem) return;
 
-      const response = await fetch(`http://localhost:5000/api/cart/remove/${cartItem.product._id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/cart/remove/${cartItem.product._id}`, {
         method: 'DELETE',
         headers: {
           authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -154,7 +154,7 @@ export default function CartPage() {
                   <div className="flex-1">
                     <h3 className="font-semibold">{item.product.name}</h3>
                     <p className="text-gray-600">
-                      ${item.product.discountPrice || item.product.price}
+                    ₹{item.product.discountPrice || item.product.price}
                     </p>
                     <p className="text-sm text-gray-500">
                       Available: {item.product.stock} units
@@ -192,7 +192,7 @@ export default function CartPage() {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span>${calculateTotal().toFixed(2)}</span>
+                  <span>₹{calculateTotal().toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
@@ -201,7 +201,7 @@ export default function CartPage() {
                 <div className="border-t pt-2 mt-2">
                   <div className="flex justify-between font-bold">
                     <span>Total</span>
-                    <span>${calculateTotal().toFixed(2)}</span>
+                    <span>₹{calculateTotal().toFixed(2)}</span>
                   </div>
                 </div>
               </div>

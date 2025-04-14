@@ -59,7 +59,7 @@ export default function OrdersPage() {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/orders', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/orders`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
@@ -80,7 +80,7 @@ export default function OrdersPage() {
 
   const updateOrderStatus = async (orderId: string, status: string) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/orders/${orderId}/status`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/orders/${orderId}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -102,7 +102,7 @@ export default function OrdersPage() {
 
   const updateTrackingNumber = async (orderId: string, trackingNumber: string) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/orders/${orderId}/tracking`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/orders/${orderId}/tracking`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -123,7 +123,7 @@ export default function OrdersPage() {
 
   const updateSellerNotes = async (orderId: string, sellerNotes: string) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/orders/${orderId}/notes`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/orders/${orderId}/notes`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -231,7 +231,7 @@ export default function OrdersPage() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold">${order.totalAmount.toFixed(2)}</p>
+                    <p className="font-bold">₹{order.totalAmount.toFixed(2)}</p>
                     <p className="text-sm text-gray-500">{order.items.length} items</p>
                   </div>
                 </div>
@@ -368,9 +368,9 @@ export default function OrdersPage() {
                                   </div>
                                 </td>
                                 <td className="px-4 py-3 text-center font-medium">{item.quantity}</td>
-                                <td className="px-4 py-3 text-right">${item.price.toFixed(2)}</td>
+                                <td className="px-4 py-3 text-right">₹{item.price.toFixed(2)}</td>
                                 <td className="px-4 py-3 text-right font-medium">
-                                  ${(item.price * item.quantity).toFixed(2)}
+                                ₹{(item.price * item.quantity).toFixed(2)}
                                 </td>
                               </tr>
                             );
@@ -396,16 +396,16 @@ export default function OrdersPage() {
                                 </div>
                               </td>
                               <td className="px-4 py-3 text-center font-medium">{item.quantity}</td>
-                              <td className="px-4 py-3 text-right">${item.price.toFixed(2)}</td>
+                              <td className="px-4 py-3 text-right">₹{item.price.toFixed(2)}</td>
                               <td className="px-4 py-3 text-right font-medium">
-                                ${(item.price * item.quantity).toFixed(2)}
+                              ₹{(item.price * item.quantity).toFixed(2)}
                               </td>
                             </tr>
                           );
                         })}
                         <tr className="bg-gray-50">
                           <td colSpan={3} className="px-4 py-3 text-right font-medium">Order Total:</td>
-                          <td className="px-4 py-3 text-right font-bold">${order.totalAmount.toFixed(2)}</td>
+                          <td className="px-4 py-3 text-right font-bold">₹{order.totalAmount.toFixed(2)}</td>
                         </tr>
                       </tbody>
                     </table>

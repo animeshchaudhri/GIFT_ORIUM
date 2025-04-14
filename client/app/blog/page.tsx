@@ -56,7 +56,7 @@ export default function BlogPage() {
   useEffect(() => {
     const fetchBlogPosts = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/blogs');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blogs`);
         if (!response.ok) throw new Error('Failed to fetch blog posts');
         const data = await response.json();
         // Check if data is an array directly or if it's nested in a data property

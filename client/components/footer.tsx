@@ -17,29 +17,36 @@ function Footer() {
           <p className="text-gray-400 mb-4 text-sm">
             Premium gift shop for all occasions. Find the perfect gift for your loved ones.
           </p>
-          <div className="flex space-x-2">
+          {/* <div className="flex space-x-2">
             {["facebook", "twitter", "instagram", "pinterest"].map((social, index) => (
               <Link
                 key={index}
-                href="#"
+                href={`https://${social}.com/giftorium`}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-gray-800 hover:bg-pink-500 w-8 h-8 rounded-full flex items-center justify-center transition-colors"
               >
                 <span className="sr-only">{social}</span>
-                {/* Icon placeholder */}
                 <div className="w-4 h-4 bg-white rounded-sm"></div>
               </Link>
             ))}
-          </div>
+          </div> */}
         </div>
 
         <div>
           <h3 className="font-bold text-lg mb-4">Quick Links</h3>
           <ul className="space-y-2 text-gray-400">
-            {["About Us", "Contact Us", "Products", "Login", "Sign Up", "FAQ", "Terms"].map((link, index) => (
+            {[{ name: "About Us", href: "/about" }, 
+              { name: "Contact Us", href: "/contact" }, 
+              { name: "Products", href: "/products" }, 
+              { name: "Login", href: "/login" }, 
+              { name: "Sign Up", href: "/signup" }, 
+              { name: "FAQ", href: "/faq" }, 
+              { name: "Terms", href: "/terms" }].map((link, index) => (
               <li key={index}>
-                <Link href="#" className="hover:text-pink-500 transition-colors flex items-center">
+                <Link href={link.href} className="hover:text-pink-500 transition-colors flex items-center">
                   <ArrowRight size={12} className="mr-2" />
-                  {link}
+                  {link.name}
                 </Link>
               </li>
             ))}
@@ -50,17 +57,17 @@ function Footer() {
           <h3 className="font-bold text-lg mb-4">Our Products</h3>
           <ul className="space-y-2 text-gray-400">
             {[
-              "Birthday Gifts",
-              "Anniversary Gifts",
-              "Wedding Gifts",
-              "Corporate Gifts",
-              "Holiday Gifts",
-              "Personalized Gifts",
+              { name: "Flowers", href: "/products?category=flowers" },
+              { name: "Keychains", href: "/products?category=keychains" },
+              { name: "Religious gifts", href: "/products?category=religious-gifts" },
+              { name: "Beauty Gifts", href: "/products?category=beauty-gifts" },
+              { name: "Home Decor", href: "/products?category=home-decor" },
+              { name: "Toys & Games", href: "/products?category=toys-games" },
             ].map((link, index) => (
               <li key={index}>
-                <Link href="#" className="hover:text-pink-500 transition-colors flex items-center">
+                <Link href={link.href} className="hover:text-pink-500 transition-colors flex items-center">
                   <ArrowRight size={12} className="mr-2" />
-                  {link}
+                  {link.name}
                 </Link>
               </li>
             ))}
@@ -74,19 +81,17 @@ function Footer() {
               <div className="bg-pink-500 p-1 rounded mr-2 mt-1">
                 <div className="w-3 h-3 bg-white rounded-sm"></div>
               </div>
-              <span>123 Gift Street, New York, USA</span>
+              <span>Shop no 3, Ad block Housing board complex, Gandhi Nagar, Jammu</span>
+            </li>
+            <li className="flex items-start">
+             
+            
             </li>
             <li className="flex items-start">
               <div className="bg-pink-500 p-1 rounded mr-2 mt-1">
                 <div className="w-3 h-3 bg-white rounded-sm"></div>
               </div>
-              <span>info@gifoy.com</span>
-            </li>
-            <li className="flex items-start">
-              <div className="bg-pink-500 p-1 rounded mr-2 mt-1">
-                <div className="w-3 h-3 bg-white rounded-sm"></div>
-              </div>
-              <span>+1 234 567 8900</span>
+              <span>094191 35840</span>
             </li>
           </ul>
           <div className="mt-4">
@@ -99,7 +104,7 @@ function Footer() {
         <p className="text-gray-400 text-sm mb-4 md:mb-0">
           © {new Date().getFullYear()} Gift Orium. All Rights Reserved.
         </p>
-        <div className="flex items-center space-x-2">
+        {/* <div className="flex items-center space-x-2">
           {["visa", "mastercard", "paypal", "apple-pay"].map((payment, index) => (
             <div key={index} className="bg-gray-800 p-1 rounded">
               <Image
@@ -110,7 +115,7 @@ function Footer() {
               />
             </div>
           ))}
-        </div>
+        </div> */}
       </div>
     </div>
   </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import ProductCard from '@/components/product-card';
 import { Input } from '@/components/ui/input';
@@ -36,24 +36,61 @@ export default function ProductsPage() {
   const [selectedTag, setSelectedTag] = useState('');
   const [sortBy, setSortBy] = useState('featured');
   const [priceRange, setPriceRange] = useState('all');
+  
+  // Parse URL search parameters on initial load
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    
+    const search = searchParams.get('search');
+    if (search) setSearchTerm(search);
+    
+    const category = searchParams.get('category');
+    if (category) setSelectedCategory(category);
+    
+    const tag = searchParams.get('tag');
+    if (tag) setSelectedTag(tag);
+    
+    const sort = searchParams.get('sort');
+    if (sort) setSortBy(sort);
+    
+    const price = searchParams.get('price');
+    if (price) setPriceRange(price);
+  }, []);
 
   const categories = [
     'All',
-    'Tech Gifts',
-    'Eco Gifts',
+    'Flowers',
+    'Keychains',
+    'Religious gifts',
     'Beauty Gifts',
+    'Home Decor',
+    "Toys & Games",
+    'Kitchen & Dining',
     'Premium Gifts',
     'Other'
   ];
+  // Update URL when filters change
+  const updateUrlParams = useCallback(() => {
+    const params = new URLSearchParams();
+    
+    if (searchTerm) params.set('search', searchTerm);
+    if (selectedCategory !== 'all') params.set('category', selectedCategory);
+    if (selectedTag) params.set('tag', selectedTag);
+    if (sortBy !== 'featured') params.set('sort', sortBy);
+    if (priceRange !== 'all') params.set('price', priceRange);
+    
+    const newUrl = `/products${params.toString() ? '?' + params.toString() : ''}`;
+    window.history.replaceState({}, '', newUrl);
+  }, [searchTerm, selectedCategory, selectedTag, sortBy, priceRange]);
 
   useEffect(() => {
     fetchProducts();
-  }, [selectedCategory, sortBy]);
+    updateUrlParams();
+  }, [selectedCategory, sortBy, updateUrlParams]);
 
   const fetchProducts = async () => {
     try {
-      let url = 'http://localhost:5000/api/products?';
-      if (selectedCategory.toLowerCase() !== 'all') {
+      let url = `${process.env.NEXT_PUBLIC_API_URL}/api/products?`;      if (selectedCategory !== 'all') {
         url += `category=${encodeURIComponent(selectedCategory)}&`;
       }
       
@@ -67,6 +104,9 @@ export default function ProductsPage() {
           break;
         case 'rating':
           url += 'sort=-rating';
+          break;
+        case 'newest':
+          url += 'sort=-createdAt';
           break;
         case 'featured':
           url += 'featured=true';
@@ -88,33 +128,35 @@ export default function ProductsPage() {
       setLoading(false);
     }
   };
-
   // Get unique tags from all products
-  const allTags = Array.from(new Set(products.flatMap(product => product.tags || [])));
+  const allTags = Array.from(new Set(products.flatMap(product => product.tags || []))).filter(Boolean);
+  
+  // Limit displayed tags initially
+  const [showAllTags, setShowAllTags] = useState(false);
+  const displayedTags = showAllTags ? allTags : allTags.slice(0, 8);
 
   // Filter products based on search term, price range, and tags
-  const filteredProducts = products.filter(product => {
-    const matchesSearch = 
+  const filteredProducts = products.filter(product => {    const matchesSearch = 
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesTag = !selectedTag || (product.tags && product.tags.includes(selectedTag));
-
+    
     let matchesPriceRange = true;
     if (priceRange !== 'all') {
       const price = product.discountPrice || product.price;
       switch (priceRange) {
-        case 'under50':
-          matchesPriceRange = price < 50;
+        case 'under500':
+          matchesPriceRange = price < 500;
           break;
-        case '50to100':
-          matchesPriceRange = price >= 50 && price <= 100;
+        case '500to1000':
+          matchesPriceRange = price >= 500 && price <= 1000;
           break;
-        case '100to200':
-          matchesPriceRange = price > 100 && price <= 200;
+        case '1000to2000':
+          matchesPriceRange = price > 1000 && price <= 2000;
           break;
-        case 'over200':
-          matchesPriceRange = price > 200;
+        case 'over2000':
+          matchesPriceRange = price > 2000;
           break;
       }
     }
@@ -178,16 +220,14 @@ export default function ProductsPage() {
                   className="pl-10"
                 />
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              </div>
-
-              {/* Category Filter */}
-              <Select value={selectedCategory.toLowerCase()} onValueChange={setSelectedCategory}>
+              </div>              {/* Category Filter */}
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((category) => (
-                    <SelectItem key={category.toLowerCase()} value={category.toLowerCase()}>
+                    <SelectItem key={category.toLowerCase()} value={category.toLowerCase() === 'all' ? 'all' : category}>
                       {category}
                     </SelectItem>
                   ))}
@@ -197,14 +237,13 @@ export default function ProductsPage() {
               {/* Price Range Filter */}
               <Select value={priceRange} onValueChange={setPriceRange}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Price range" />
-                </SelectTrigger>
+                  <SelectValue placeholder="Price range" />                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Prices</SelectItem>
-                  <SelectItem value="under50">Under ₹500</SelectItem>
-                  <SelectItem value="50to100">$50 - ₹1000</SelectItem>
-                  <SelectItem value="100to200">$100 - ₹2000</SelectItem>
-                  <SelectItem value="over200">Over ₹2000</SelectItem>
+                  <SelectItem value="under500">Under ₹500</SelectItem>
+                  <SelectItem value="500to1000">₹500 - ₹1000</SelectItem>
+                  <SelectItem value="1000to2000">₹1000 - ₹2000</SelectItem>
+                  <SelectItem value="over2000">Over ₹2000</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -221,27 +260,37 @@ export default function ProductsPage() {
                   <SelectItem value="newest">Newest</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-
-            {allTags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                <Badge
-                  variant={selectedTag === '' ? "default" : "outline"}
-                  className="cursor-pointer"
-                  onClick={() => setSelectedTag('')}
-                >
-                  All Tags
-                </Badge>
-                {allTags.map((tag) => (
+            </div>            {allTags.length > 0 && (
+              <div className="space-y-2">
+                <div className="flex flex-wrap gap-2">
                   <Badge
-                    key={tag}
-                    variant={selectedTag === tag ? "default" : "outline"}
+                    variant={selectedTag === '' ? "default" : "outline"}
                     className="cursor-pointer"
-                    onClick={() => setSelectedTag(tag)}
+                    onClick={() => setSelectedTag('')}
                   >
-                    {tag}
+                    All Tags
                   </Badge>
-                ))}
+                  {displayedTags.map((tag) => (
+                    <Badge
+                      key={tag}
+                      variant={selectedTag === tag ? "default" : "outline"}
+                      className="cursor-pointer"
+                      onClick={() => setSelectedTag(tag)}
+                    >
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+                {allTags.length > 8 && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => setShowAllTags(!showAllTags)}
+                    className="text-xs text-gray-500 hover:text-pink-500"
+                  >
+                    {showAllTags ? 'Show Less' : `Show ${allTags.length - 8} More Tags`}
+                  </Button>
+                )}
               </div>
             )}
           </div>

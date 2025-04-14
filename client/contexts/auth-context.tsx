@@ -64,7 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const timestamp = new Date().getTime();
         
         // Validate token with backend - use a timeout to prevent long hangs
-        const tokenPromise = fetch(`http://localhost:5000/api/users/validate-token?_t=${timestamp}`, {
+        const tokenPromise = fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/validate-token?_t=${timestamp}`, {
           headers: {
             'Authorization': `Bearer ${storedToken}`,
             'Cache-Control': 'no-cache, no-store, must-revalidate',

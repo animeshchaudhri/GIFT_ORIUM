@@ -48,7 +48,7 @@ export default function ProductCard({ product, name, price, discount, index, onC
     try {
       if (!productData._id) return;
       
-      const response = await fetch('http://localhost:5000/api/cart/add', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/cart/add`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

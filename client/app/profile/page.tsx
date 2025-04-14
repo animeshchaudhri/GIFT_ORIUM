@@ -71,7 +71,7 @@ export default function ProfilePage() {
 
   const fetchUserProfile = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/users/profile', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/profile`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -99,7 +99,7 @@ export default function ProfilePage() {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/orders/my-orders', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/orders/my-orders`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -315,7 +315,7 @@ export default function ProfilePage() {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold">${order.totalAmount.toFixed(2)}</p>
+                    <p className="font-semibold">₹{order.totalAmount.toFixed(2)}</p>
                     <p className="text-sm text-gray-500 capitalize">{order.status}</p>
                   </div>
                 </div>
@@ -324,7 +324,7 @@ export default function ProfilePage() {
                   {order.items.map((item, index) => (
                     <div key={index} className="flex justify-between text-sm">
                       <span>{item.product?.name || 'Product Unavailable'} x {item.quantity}</span>
-                      <span>${((item.product?.price || 0) * item.quantity).toFixed(2)}</span>
+                      <span>₹{((item.product?.price || 0) * item.quantity).toFixed(2)}</span>
                     </div>
                   ))}
                 </div>

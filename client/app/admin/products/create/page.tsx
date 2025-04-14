@@ -11,8 +11,18 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { toast } from '@/components/ui/use-toast';
 
-const categories = ['Tech Gifts', 'Eco Gifts', 'Beauty Gifts', 'Premium Gifts', 'Other'];
-
+const categories = [
+  'All',
+  'Flowers',
+  'Keychains',
+  'Religious gifts',
+  'Beauty Gifts',
+  'Home Decor',
+  "Toys & Games",
+  'Kitchen & Dining',
+  'Premium Gifts',
+  'Other'
+];
 export default function CreateProduct() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
