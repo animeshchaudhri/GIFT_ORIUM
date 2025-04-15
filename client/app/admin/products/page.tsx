@@ -14,7 +14,7 @@ import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { useRouter } from 'next/navigation';
-
+import { toast } from 'react-toastify';
 interface Product {
   _id: string;
   name: string;
@@ -38,9 +38,7 @@ interface FormData {
 }
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [products, setProducts] = useState<Product[]>([]);  const [loading, setLoading] = useState(true);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [formData, setFormData] = useState<FormData>({
@@ -59,15 +57,14 @@ export default function ProductsPage() {
   const [saveLoading, setSaveLoading] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      setError('');
       
       const token = localStorage.getItem('token');
       if (!token) {
-        throw new Error('Authentication required');
+        toast.error('Authentication required');
+        return;
       }
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products`, {
@@ -78,17 +75,19 @@ export default function ProductsPage() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Failed to fetch products');
+        toast.error(errorData.message || 'Failed to fetch products');
+        return;
       }
 
       const data = await response.json();
       if (!Array.isArray(data.data)) {
-        throw new Error('Invalid response format');
+        toast.error('Invalid response format');
+        return;
       }
 
       setProducts(data.data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred while fetching products');
+      toast.error(err instanceof Error ? err.message : 'An error occurred while fetching products');
       setProducts([]);
     } finally {
       setLoading(false);
@@ -170,7 +169,8 @@ export default function ProductsPage() {
     const token = localStorage.getItem('token');
 
     if (!token) {
-      throw new Error('Authentication required');
+      toast.error('Authentication required');
+      return imagePreviewUrls;
     }
 
     try {
@@ -217,38 +217,42 @@ export default function ProductsPage() {
       setUploadProgress(0);
     }
   };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSaveLoading(true);
-    setError('');
-
-    try {
+    setSaveLoading(true);try {
       // Validate form data
       if (!formData.name.trim()) {
-        throw new Error('Product name is required');
+        toast.error('Product name is required');
+        return;
       }
       if (!formData.description.trim()) {
-        throw new Error('Product description is required');
+        toast.error('Product description is required');
+        return;
       }
       if (isNaN(parseFloat(formData.price)) || parseFloat(formData.price) <= 0) {
-        throw new Error('Please enter a valid price');
+        toast.error('Please enter a valid price');
+        return;
       }
       if (formData.discountedPrice && (isNaN(parseFloat(formData.discountedPrice)) || parseFloat(formData.discountedPrice) >= parseFloat(formData.price))) {
-        throw new Error('Discounted price must be less than regular price');
+        toast.error('Discounted price must be less than regular price');
+        return;
       }
       if (!formData.category) {
-        throw new Error('Please select a category');
+        toast.error('Please select a category');
+        return;
       }
       if (isNaN(parseInt(formData.stock)) || parseInt(formData.stock) < 0) {
-        throw new Error('Please enter a valid stock quantity');
+        toast.error('Please enter a valid stock quantity');
+        return;
       }
       // Validate that at least one image is selected
       if (!editingProduct && imageFiles.length === 0) {
-        throw new Error('Please upload at least one image');
+        toast.error('Please upload at least one image');
+        return;
       }
       if (editingProduct && imageFiles.length === 0 && imagePreviewUrls.length === 0) {
-        throw new Error('Please upload at least one image');
+        toast.error('Please upload at least one image');
+        return;
       }
 
       const imageUrls = await uploadImagesToCloudinary();
@@ -262,11 +266,10 @@ export default function ProductsPage() {
         stock: parseInt(formData.stock),
         featured: formData.featured,
         images: imageUrls.length > 0 ? imageUrls : ['/placeholder.svg'],
-      };
-
-      const token = localStorage.getItem('token');
+      };      const token = localStorage.getItem('token');
       if (!token) {
-        throw new Error('Authentication required');
+        toast.error('Authentication required');
+        return;
       }
 
       const url = editingProduct
@@ -284,20 +287,24 @@ export default function ProductsPage() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `Failed to ${editingProduct ? 'update' : 'create'} product`);
+        toast.error(errorData.message || `Failed to ${editingProduct ? 'update' : 'create'} product`);
+        return;
       }
 
       const result = await response.json();
       if (!result.data) {
-        throw new Error('Invalid response format');
+        toast.error('Invalid response format');
+        return;
       }
+
+      // Show success message
+      toast.success(`Product ${editingProduct ? 'updated' : 'created'} successfully`);
 
       await fetchProducts();
       setIsDialogOpen(false);
       setEditingProduct(null);
-      resetForm();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save product');
+      resetForm();    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to save product');
     } finally {
       setSaveLoading(false);
     }
@@ -314,12 +321,14 @@ export default function ProductsPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete product');
+        toast.error('Failed to delete product');
+        return;
       }
 
       await fetchProducts();
+      toast.success('Product deleted successfully');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete product');
+      toast.error(err instanceof Error ? err.message : 'Failed to delete product');
     }
   };
 
@@ -568,15 +577,9 @@ export default function ProductsPage() {
         </Button>
       </div>
 
-      {error && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
+      
 
-      {products.length === 0 && !loading && !error ? (
+      {products.length === 0 && !loading  ? (
         <Card className="py-8 sm:py-12">
           <CardContent className="flex flex-col items-center justify-center text-center">
             <div className="bg-primary/10 p-3 rounded-full mb-4">

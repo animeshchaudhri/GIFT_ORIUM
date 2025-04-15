@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from 'react-toastify';
 
 const categories = [
   'All',
@@ -127,22 +127,17 @@ export default function CreateProduct() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create product');
+        toast.error(errorData.message || 'Failed to create product');
+        //throw new Error(errorData.message || 'Failed to create product');
       }
-
-      toast({
-        title: 'Success',
-        description: 'Product created successfully',
-      });
-
-      router.push('/admin/products');
-      router.refresh();
+      if(response.ok){
+        toast.success('Product created successfully');
+        router.push('/admin/products');
+        router.refresh();
+    }
+     
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to create product',
-        variant: 'destructive',
-      });
+      toast.error((error as Error).message);
     } finally {
       setLoading(false);
     }
