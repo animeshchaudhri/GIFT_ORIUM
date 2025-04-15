@@ -9,10 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import Header from "@/components/header";
 import HeroSection from "@/components/hero-section";
 import FeaturesSection from "@/components/features-section";
-import ProductCard from "@/components/product-card";
-import CategoryCard from "@/components/category-card";
-import PricingCard from "@/components/pricing-card";
-import TestimonialCard from "@/components/testimonial-card";
+
 import BlogCard from "@/components/blog-card";
 import Footer from "@/components/footer";
 import Premium from "@/components/premium";
@@ -56,7 +53,7 @@ export default function Home() {
   const blogPosts = [
     {
       title: "Cuddle Up with Love: Explore Our Cutest Soft Toys",
-      slug: "soft-toys",
+      slug: "why-soft-toys-make-the-perfect-gift-for-all-ages",
       summary: "Discover our collection of the cutest soft toys that bring comfort and joy to anyone's life.",
       featuredImage: "soft.png",
       tags: ["Soft Toys"],
@@ -66,7 +63,7 @@ export default function Home() {
     },
     {
       title: "Why Artificial Flowers Are the New Home Trend",
-      slug: "artificial-flowers",
+      slug: "the-perfect-long-lasting-gift-that-never-wilts",
       summary: "Artificial flowers are becoming a popular trend in home decor for their beauty and longevity.",
       featuredImage: "artificial-flowers.jpg",
       tags: ["Artificial Flowers"],
@@ -76,7 +73,7 @@ export default function Home() {
     },
     {
       title: "Bring Home Blessings with Our Guruji Religious Collection",
-      slug: "guruji-items",
+      slug: "thoughtful-guruji-gifts-that-show-respect-and-gratitude",
       summary: "Explore our curated collection of religious items, bringing blessings and serenity into your home.",
       featuredImage: "guruji-items.jpg",
       tags: ["Guruji Items"],
@@ -147,7 +144,7 @@ export default function Home() {
     <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
       {deals.map((item, index) => (
         <Link
-          href={`/products/${encodeURIComponent(item.name.toLowerCase().replace(" ", "-"))}`}
+          href={`/products?category=${encodeURIComponent(item.name.toLowerCase().replace(" ", "-"))}`}
           key={index}
         >
           <div className="bg-white rounded-xl p-4 text-center hover:shadow-md transition-shadow cursor-pointer">

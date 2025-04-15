@@ -164,7 +164,7 @@ export default function AdminDashboard() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent className="p-4 pt-0">
-            <div className="text-2xl font-bold">${stats.totalSales.toFixed(2)}</div>
+            <div className="text-2xl font-bold">₹{stats.totalSales.toFixed(2)}</div>
             <p className="text-xs text-muted-foreground flex items-center mt-1">
               <TrendingUp className="mr-1 h-3 w-3 text-green-500" />
               <span className="text-green-500 font-medium">+12.5%</span> from last month
@@ -291,7 +291,7 @@ export default function AdminDashboard() {
                       <p className="text-sm text-gray-500">{order.user.email}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium">${order.totalAmount.toFixed(2)}</p>
+                      <p className="font-medium">₹{order.totalAmount.toFixed(2)}</p>
                       <div className="flex items-center text-xs">
                         <span className={`px-2 py-1 rounded-full capitalize ${
                           order.status === 'completed' ? 'bg-green-100 text-green-700' : 

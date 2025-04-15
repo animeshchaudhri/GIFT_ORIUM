@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Home, ChevronRight, Search, SlidersHorizontal, ShoppingCart } from 'lucide-react';
+import { Home, ChevronRight, Search, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 
 interface Product {
@@ -36,39 +36,53 @@ export default function ProductsPage() {
   const [selectedTag, setSelectedTag] = useState('');
   const [sortBy, setSortBy] = useState('featured');
   const [priceRange, setPriceRange] = useState('all');
+  const [initialLoad, setInitialLoad] = useState(true);
   
-  // Parse URL search parameters on initial load
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    
-    const search = searchParams.get('search');
-    if (search) setSearchTerm(search);
-    
-    const category = searchParams.get('category');
-    if (category) setSelectedCategory(category);
-    
-    const tag = searchParams.get('tag');
-    if (tag) setSelectedTag(tag);
-    
-    const sort = searchParams.get('sort');
-    if (sort) setSortBy(sort);
-    
-    const price = searchParams.get('price');
-    if (price) setPriceRange(price);
-  }, []);
-
   const categories = [
     'All',
     'Flowers',
     'Keychains',
     'Religious gifts',
-    'Beauty Gifts',
+    'Soft toys',
     'Home Decor',
     "Toys & Games",
     'Kitchen & Dining',
     'Premium Gifts',
     'Other'
   ];
+  
+  // Parse URL search parameters on initial load only
+  useEffect(() => {
+    if (!initialLoad) return;
+    
+    const searchParams = new URLSearchParams(window.location.search);
+    
+    const search = searchParams.get('search');
+    if (search) setSearchTerm(search);
+    
+    const category = searchParams.get('category');
+    if (category) {
+      // Find the matching category from our categories array (case-insensitive)
+      const matchingCategory = categories.find(
+        c => c.toLowerCase() === decodeURIComponent(category).toLowerCase()
+      );
+      if (matchingCategory) {
+        setSelectedCategory(matchingCategory);
+      }
+    }
+    
+    const tag = searchParams.get('tag');
+    if (tag) setSelectedTag(decodeURIComponent(tag));
+    
+    const sort = searchParams.get('sort');
+    if (sort) setSortBy(sort);
+    
+    const price = searchParams.get('price');
+    if (price) setPriceRange(price);
+    
+    setInitialLoad(false);
+  }, [categories, initialLoad]);
+
   // Update URL when filters change
   const updateUrlParams = useCallback(() => {
     const params = new URLSearchParams();
@@ -83,14 +97,21 @@ export default function ProductsPage() {
     window.history.replaceState({}, '', newUrl);
   }, [searchTerm, selectedCategory, selectedTag, sortBy, priceRange]);
 
+  // Fetch products when filters change
   useEffect(() => {
+    // Skip on initial load since we'll fetch after reading URL params
+    if (initialLoad) return;
+    
     fetchProducts();
     updateUrlParams();
-  }, [selectedCategory, sortBy, updateUrlParams]);
+  }, [selectedCategory, sortBy, updateUrlParams, searchTerm, priceRange, selectedTag, initialLoad]);
 
   const fetchProducts = async () => {
     try {
-      let url = `${process.env.NEXT_PUBLIC_API_URL}/api/products?`;      if (selectedCategory !== 'all') {
+      let url = `${process.env.NEXT_PUBLIC_API_URL}/api/products?`;
+      
+      // Only add category parameter if it's not 'all' and is a valid category
+      if (selectedCategory !== 'all' && categories.find(c => c === selectedCategory)) {
         url += `category=${encodeURIComponent(selectedCategory)}&`;
       }
       
@@ -128,6 +149,7 @@ export default function ProductsPage() {
       setLoading(false);
     }
   };
+  
   // Get unique tags from all products
   const allTags = Array.from(new Set(products.flatMap(product => product.tags || []))).filter(Boolean);
   
@@ -136,7 +158,8 @@ export default function ProductsPage() {
   const displayedTags = showAllTags ? allTags : allTags.slice(0, 8);
 
   // Filter products based on search term, price range, and tags
-  const filteredProducts = products.filter(product => {    const matchesSearch = 
+  const filteredProducts = products.filter(product => {    
+    const matchesSearch = 
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description.toLowerCase().includes(searchTerm.toLowerCase());
 
@@ -163,6 +186,11 @@ export default function ProductsPage() {
 
     return matchesSearch && matchesPriceRange && matchesTag;
   });
+
+  // Initial data fetch
+  useEffect(() => {
+    fetchProducts();
+  }, []); // Empty dependency array means this runs once on mount
 
   if (loading) {
     return (
@@ -220,14 +248,19 @@ export default function ProductsPage() {
                   className="pl-10"
                 />
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              </div>              {/* Category Filter */}
+              </div>
+              
+              {/* Category Filter */}
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((category) => (
-                    <SelectItem key={category.toLowerCase()} value={category.toLowerCase() === 'all' ? 'all' : category}>
+                    <SelectItem 
+                      key={category.toLowerCase()} 
+                      value={category === 'All' ? 'all' : category}
+                    >
                       {category}
                     </SelectItem>
                   ))}
@@ -237,7 +270,8 @@ export default function ProductsPage() {
               {/* Price Range Filter */}
               <Select value={priceRange} onValueChange={setPriceRange}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Price range" />                </SelectTrigger>
+                  <SelectValue placeholder="Price range" />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Prices</SelectItem>
                   <SelectItem value="under500">Under ₹500</SelectItem>
@@ -260,7 +294,9 @@ export default function ProductsPage() {
                   <SelectItem value="newest">Newest</SelectItem>
                 </SelectContent>
               </Select>
-            </div>            {allTags.length > 0 && (
+            </div>
+            
+            {allTags.length > 0 && (
               <div className="space-y-2">
                 <div className="flex flex-wrap gap-2">
                   <Badge

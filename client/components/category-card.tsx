@@ -53,7 +53,7 @@ export default function CategoryCard({
           asChild
           className={`text-white rounded-full px-4 py-1 text-sm ${buttonBgMap[buttonColor] || "bg-gray-500 hover:bg-gray-600"}`}
         >
-          <Link href={`/products?category=${encodeURIComponent(title.toLowerCase())}`}>
+          <Link href={`/products?tag=${encodeURIComponent(title.toLowerCase())}`}>
             Shop Now
           </Link>
         </Button>

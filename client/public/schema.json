@@ -1,0 +1,61 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://giftorium.vercel.app/#organization",
+      "name": "Giftorium",
+      "url": "https://giftorium.vercel.app",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://giftorium.vercel.app/placeholder-logo.svg"
+      },
+      "sameAs": [],
+      "description": "Your premier destination for unique and thoughtful gifts"
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://giftorium.vercel.app/#website",
+      "url": "https://giftorium.vercel.app",
+      "name": "Giftorium",
+      "publisher": {
+        "@id": "https://giftorium.vercel.app/#organization"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://giftorium.vercel.app/products?search={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://giftorium.vercel.app/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@id": "https://giftorium.vercel.app",
+            "name": "Home"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "item": {
+            "@id": "https://giftorium.vercel.app/products",
+            "name": "Products"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "item": {
+            "@id": "https://giftorium.vercel.app/blog",
+            "name": "Blog"
+          }
+        }
+      ]
+    }
+  ]
+}

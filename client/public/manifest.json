@@ -1,0 +1,46 @@
+{
+  "name": "Giftorium",
+  "short_name": "Giftorium",
+  "description": "Your premier destination for unique and thoughtful gifts",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/placeholder-logo.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/placeholder-logo.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["shopping", "lifestyle", "e-commerce"],
+  "screenshots": [
+    {
+      "src": "/landing.jpg",
+      "sizes": "1280x720",
+      "type": "image/jpeg",
+      "platform": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "View Products",
+      "url": "/products",
+      "description": "Browse our collection of unique gifts"
+    },
+    {
+      "name": "Read Blog",
+      "url": "/blog",
+      "description": "Read our latest gift guides and articles"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

@@ -2,7 +2,7 @@ import { Check } from "lucide-react"
 
 export default function FeaturesSection() {
   const features = [
-    "Free Shipping On Order $50+",
+    "Free Shipping On Order ₹1000+",
     "Easy 30 Days Returns",
     "100% Secure Payment",
     "24/7 Customer Support",
