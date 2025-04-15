@@ -110,8 +110,8 @@ export default function ProductsPage() {
     try {
       let url = `${process.env.NEXT_PUBLIC_API_URL}/api/products?`;
       
-      // Only add category parameter if it's not 'all' and is a valid category
-      if (selectedCategory !== 'all' && categories.find(c => c === selectedCategory)) {
+      // Only add category parameter if it's not 'all', is a valid category, and there's no search term
+      if (!searchTerm && selectedCategory !== 'all' && categories.find(c => c === selectedCategory)) {
         url += `category=${encodeURIComponent(selectedCategory)}&`;
       }
       
@@ -282,18 +282,36 @@ export default function ProductsPage() {
               </Select>
 
               {/* Sort */}
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="featured">Featured</SelectItem>
-                  <SelectItem value="price_asc">Price: Low to High</SelectItem>
-                  <SelectItem value="price_desc">Price: High to Low</SelectItem>
-                  <SelectItem value="rating">Top Rated</SelectItem>
-                  <SelectItem value="newest">Newest</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="flex gap-2">
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="featured">Featured</SelectItem>
+                    <SelectItem value="price_asc">Price: Low to High</SelectItem>
+                    <SelectItem value="price_desc">Price: High to Low</SelectItem>
+                    <SelectItem value="rating">Top Rated</SelectItem>
+                    <SelectItem value="newest">Newest</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSearchTerm('');
+                    setSelectedCategory('all');
+                    setPriceRange('all');
+                    setSortBy('featured');
+                    setSelectedTag('');
+                    const newUrl = '/products';
+                    window.history.replaceState({}, '', newUrl);
+                    fetchProducts();
+                  }}
+                  className="shrink-0"
+                >
+                  Reset
+                </Button>
+              </div>
             </div>
             
             {allTags.length > 0 && (
