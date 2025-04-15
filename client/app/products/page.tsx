@@ -1,10 +1,17 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Fuse from 'fuse.js';
 import ProductCard from '@/components/product-card';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -28,6 +35,7 @@ interface Product {
 
 export default function ProductsPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -36,8 +44,9 @@ export default function ProductsPage() {
   const [selectedTag, setSelectedTag] = useState('');
   const [sortBy, setSortBy] = useState('featured');
   const [priceRange, setPriceRange] = useState('all');
-  const [initialLoad, setInitialLoad] = useState(true);
-  
+  const [showAllTags, setShowAllTags] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+
   const categories = [
     'All',
     'Flowers',
@@ -45,160 +54,158 @@ export default function ProductsPage() {
     'Religious gifts',
     'Soft toys',
     'Home Decor',
-    "Toys & Games",
+    'Toys & Games',
     'Kitchen & Dining',
     'Premium Gifts',
-    'Other'
+    'Other',
   ];
-  
-  // Parse URL search parameters on initial load only
-  useEffect(() => {
-    if (!initialLoad) return;
-    
-    const searchParams = new URLSearchParams(window.location.search);
-    
-    const search = searchParams.get('search');
-    if (search) setSearchTerm(search);
-    
-    const category = searchParams.get('category');
-    if (category) {
-      // Find the matching category from our categories array (case-insensitive)
-      const matchingCategory = categories.find(
-        c => c.toLowerCase() === decodeURIComponent(category).toLowerCase()
-      );
-      if (matchingCategory) {
-        setSelectedCategory(matchingCategory);
-      }
-    }
-    
-    const tag = searchParams.get('tag');
-    if (tag) setSelectedTag(decodeURIComponent(tag));
-    
-    const sort = searchParams.get('sort');
-    if (sort) setSortBy(sort);
-    
-    const price = searchParams.get('price');
-    if (price) setPriceRange(price);
-    
-    setInitialLoad(false);
-  }, [categories, initialLoad]);
 
-  // Update URL when filters change
-  const updateUrlParams = useCallback(() => {
-    const params = new URLSearchParams();
-    
-    if (searchTerm) params.set('search', searchTerm);
-    if (selectedCategory !== 'all') params.set('category', selectedCategory);
-    if (selectedTag) params.set('tag', selectedTag);
-    if (sortBy !== 'featured') params.set('sort', sortBy);
-    if (priceRange !== 'all') params.set('price', priceRange);
-    
-    const newUrl = `/products${params.toString() ? '?' + params.toString() : ''}`;
-    window.history.replaceState({}, '', newUrl);
-  }, [searchTerm, selectedCategory, selectedTag, sortBy, priceRange]);
-
-  // Fetch products when filters change
-  useEffect(() => {
-    // Skip on initial load since we'll fetch after reading URL params
-    if (initialLoad) return;
-    
-    fetchProducts();
-    updateUrlParams();
-  }, [selectedCategory, sortBy, updateUrlParams, searchTerm, priceRange, selectedTag, initialLoad]);
-
+  // Fetch all products (used for initial load and search refreshes)
   const fetchProducts = async () => {
+    setLoading(true);
     try {
-      let url = `${process.env.NEXT_PUBLIC_API_URL}/api/products?`;
-      
-      // Only add category parameter if it's not 'all', is a valid category, and there's no search term
-      if (!searchTerm && selectedCategory !== 'all' && categories.find(c => c === selectedCategory)) {
-        url += `category=${encodeURIComponent(selectedCategory)}&`;
-      }
-      
-      // Add sorting parameters
-      switch (sortBy) {
-        case 'price_asc':
-          url += 'sort=price';
-          break;
-        case 'price_desc':
-          url += 'sort=-price';
-          break;
-        case 'rating':
-          url += 'sort=-rating';
-          break;
-        case 'newest':
-          url += 'sort=-createdAt';
-          break;
-        case 'featured':
-          url += 'featured=true';
-          break;
-        default:
-          url += 'sort=-createdAt';
-      }
-
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/api/products`;
       const response = await fetch(url);
       if (!response.ok) throw new Error('Failed to fetch products');
-      
-      const responseData = await response.json();
-      const productsArray = responseData.data || [];
-      setProducts(productsArray);
+      const data = await response.json();
+      setProducts(data.data || []);
     } catch (err) {
       setError('Failed to load products');
-      setProducts([]); 
+      setProducts([]);
     } finally {
       setLoading(false);
     }
   };
-  
-  // Get unique tags from all products
-  const allTags = Array.from(new Set(products.flatMap(product => product.tags || []))).filter(Boolean);
-  
-  // Limit displayed tags initially
-  const [showAllTags, setShowAllTags] = useState(false);
+
+  // Initial load
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  // Handle URL params for tag filtering on initial load
+  useEffect(() => {
+    const tagParam = searchParams.get('tag');
+    if (tagParam) {
+      setSelectedTag(decodeURIComponent(tagParam));
+    }
+  }, [searchParams]);
+
+  // Get all tags from products
+  const allTags = Array.from(new Set(products.flatMap(p => p.tags || []))).filter(Boolean);
   const displayedTags = showAllTags ? allTags : allTags.slice(0, 8);
 
-  // Filter products based on search term, price range, and tags
-  const filteredProducts = products.filter(product => {    
-    const matchesSearch = 
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.description.toLowerCase().includes(searchTerm.toLowerCase());
+  // Search handler with debounce
+  useEffect(() => {
+    if (isSearching) {
+      const handler = setTimeout(() => {
+        // Reset filters when searching
+        if (searchTerm) {
+          setSelectedCategory('all');
+          setSelectedTag('');
+          setPriceRange('all');
+          
+          // Only make a new API call for fresh products when searching
+          fetchProducts();
+        }
+        setIsSearching(false);
+      }, 500); // 500ms debounce
+      
+      return () => clearTimeout(handler);
+    }
+  }, [isSearching, searchTerm]);
 
-    const matchesTag = !selectedTag || (product.tags && product.tags.includes(selectedTag));
+  // Fuse.js fuzzy search setup
+  const fuse = new Fuse(products, {
+    keys: ['name', 'description', 'tags'],
+    threshold: 0.3,
+  });
+
+  // Get filtered products based on search and filters
+  const getFilteredProducts = () => {
+    // Apply search first using Fuse.js if there's a search term
+    let filtered = searchTerm 
+      ? fuse.search(searchTerm).map(result => result.item) 
+      : products;
     
-    let matchesPriceRange = true;
-    if (priceRange !== 'all') {
+    // Then apply filters
+    return filtered.filter((product: any) => {
+      const matchesTag =
+        !selectedTag || (product.tags && product.tags.includes(selectedTag));
+
+      let matchesPrice = true;
       const price = product.discountPrice || product.price;
       switch (priceRange) {
         case 'under500':
-          matchesPriceRange = price < 500;
+          matchesPrice = price < 500;
           break;
         case '500to1000':
-          matchesPriceRange = price >= 500 && price <= 1000;
+          matchesPrice = price >= 500 && price <= 1000;
           break;
         case '1000to2000':
-          matchesPriceRange = price > 1000 && price <= 2000;
+          matchesPrice = price > 1000 && price <= 2000;
           break;
         case 'over2000':
-          matchesPriceRange = price > 2000;
+          matchesPrice = price > 2000;
           break;
       }
-    }
 
-    return matchesSearch && matchesPriceRange && matchesTag;
+      const matchesCategory =
+        selectedCategory === 'all' || product.category === selectedCategory;
+
+      return matchesCategory && matchesTag && matchesPrice;
+    });
+  };
+
+  const filteredProducts = getFilteredProducts();
+
+  // Sort filtered products
+  const sortedProducts = [...filteredProducts].sort((a: any, b: any) => {
+    const priceA = a.discountPrice || a.price;
+    const priceB = b.discountPrice || b.price;
+    
+    switch (sortBy) {
+      case 'price_asc':
+        return priceA - priceB;
+      case 'price_desc':
+        return priceB - priceA;
+      case 'rating':
+        return b.rating - a.rating;
+      case 'newest':
+        return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+      default:
+        return a.featured ? -1 : 1; // Featured items first
+    }
   });
 
-  // Initial data fetch
-  useEffect(() => {
-    fetchProducts();
-  }, []); // Empty dependency array means this runs once on mount
+  // Handle tag selection
+  const handleTagSelect = (tag: string) => {
+    setSelectedTag(tag);
+    if (tag) {
+      router.push(`/products?tag=${encodeURIComponent(tag)}`);
+    } else {
+      router.push('/products');
+    }
+  };
 
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-12 flex justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
-      </div>
-    );
-  }
+  // Reset all filters and search
+  const handleReset = () => {
+    setSearchTerm('');
+    setSelectedCategory('all');
+    setPriceRange('all');
+    setSortBy('featured');
+    setSelectedTag('');
+    router.push('/products');
+    // Refresh products
+    fetchProducts();
+  };
+
+  // if (loading) {
+  //   return (
+  //     <div className="container mx-auto px-4 py-12 flex justify-center">
+  //       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+  //     </div>
+  //   );
+  // }
 
   if (error) {
     return (
@@ -223,9 +230,7 @@ export default function ProductsPage() {
               </Link>
             </li>
             <ChevronRight className="h-4 w-4" />
-            <li className="text-pink-600 font-medium">
-              Products
-            </li>
+            <li className="text-pink-600 font-medium">Products</li>
           </ol>
           <div className="ml-auto flex items-center space-x-2">
             <Link href="/cart" className="text-gray-600 hover:text-pink-600 flex items-center">
@@ -238,27 +243,31 @@ export default function ProductsPage() {
         <Card className="p-6 mb-8">
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* Search */}
+              {/* Search - Updated to trigger search mode */}
               <div className="relative">
                 <Input
                   type="text"
                   placeholder="Search products..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setSearchTerm(value);
+                    setIsSearching(true);
+                  }}
                   className="pl-10"
                 />
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               </div>
-              
+
               {/* Category Filter */}
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger>
+                <SelectTrigger className="h-10">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((category) => (
-                    <SelectItem 
-                      key={category.toLowerCase()} 
+                    <SelectItem
+                      key={category.toLowerCase()}
                       value={category === 'All' ? 'all' : category}
                     >
                       {category}
@@ -267,9 +276,9 @@ export default function ProductsPage() {
                 </SelectContent>
               </Select>
 
-              {/* Price Range Filter */}
+              {/* Price Filter */}
               <Select value={priceRange} onValueChange={setPriceRange}>
-                <SelectTrigger>
+                <SelectTrigger className="h-10">
                   <SelectValue placeholder="Price range" />
                 </SelectTrigger>
                 <SelectContent>
@@ -281,10 +290,10 @@ export default function ProductsPage() {
                 </SelectContent>
               </Select>
 
-              {/* Sort */}
+              {/* Sort + Reset */}
               <div className="flex gap-2">
                 <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger>
+                  <SelectTrigger className="h-10">
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent>
@@ -297,48 +306,40 @@ export default function ProductsPage() {
                 </Select>
                 <Button
                   variant="outline"
-                  onClick={() => {
-                    setSearchTerm('');
-                    setSelectedCategory('all');
-                    setPriceRange('all');
-                    setSortBy('featured');
-                    setSelectedTag('');
-                    const newUrl = '/products';
-                    window.history.replaceState({}, '', newUrl);
-                    fetchProducts();
-                  }}
-                  className="shrink-0"
+                  onClick={handleReset}
+                  className="h-10"
                 >
                   Reset
                 </Button>
               </div>
             </div>
-            
+
+            {/* Tags */}
             {allTags.length > 0 && (
               <div className="space-y-2">
                 <div className="flex flex-wrap gap-2">
                   <Badge
-                    variant={selectedTag === '' ? "default" : "outline"}
+                    variant={selectedTag === '' ? 'default' : 'outline'}
                     className="cursor-pointer"
-                    onClick={() => setSelectedTag('')}
+                    onClick={() => handleTagSelect('')}
                   >
                     All Tags
                   </Badge>
                   {displayedTags.map((tag) => (
                     <Badge
                       key={tag}
-                      variant={selectedTag === tag ? "default" : "outline"}
+                      variant={selectedTag === tag ? 'default' : 'outline'}
                       className="cursor-pointer"
-                      onClick={() => setSelectedTag(tag)}
+                      onClick={() => handleTagSelect(tag)}
                     >
                       {tag}
                     </Badge>
                   ))}
                 </div>
                 {allTags.length > 8 && (
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => setShowAllTags(!showAllTags)}
                     className="text-xs text-gray-500 hover:text-pink-500"
                   >
@@ -350,9 +351,14 @@ export default function ProductsPage() {
           </div>
         </Card>
 
-        {filteredProducts.length > 0 ? (
+        {/* Product Grid */}
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+          </div>
+        ) : sortedProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
+            {sortedProducts.map((product:any) => (
               <ProductCard
                 key={product._id}
                 product={product}
@@ -366,9 +372,7 @@ export default function ProductsPage() {
               <Search className="h-12 w-12 text-gray-400 mx-auto" />
             </div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
-            <p className="text-gray-600">
-              Try adjusting your search or filter criteria
-            </p>
+            <p className="text-gray-600">Try adjusting your search or filter criteria</p>
           </div>
         )}
       </div>
