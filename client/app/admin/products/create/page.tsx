@@ -118,23 +118,32 @@ export default function CreateProduct() {
       // Append images
       Array.from(images).forEach(image => {
         formDataToSend.append('images', image);
-      });
-
-      const response = await fetch('/api/products', {
+      });      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products`, {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
         body: formDataToSend,
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        toast.error(errorData.message || 'Failed to create product');
-        //throw new Error(errorData.message || 'Failed to create product');
-      }
-      if(response.ok){
+      let errorData;
+      try {
+        const data = await response.json();
+        
+        if (!response.ok) {
+          toast.error(data.message || 'Failed to create product');
+          return;
+        }
+        
         toast.success('Product created successfully');
         router.push('/admin/products');
         router.refresh();
-    }
+      } catch (jsonError) {
+        // Handle case where response is not valid JSON
+        toast.error('Received invalid response from server');
+        console.error('JSON Parse Error:', jsonError);
+        return;
+      }
      
     } catch (error) {
       toast.error((error as Error).message);

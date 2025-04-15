@@ -176,10 +176,10 @@ export default function ProductsPage() {
     try {
       for (let i = 0; i < imageFiles.length; i++) {
         const file = imageFiles[i];
-        
-        // Validate file size
+          // Validate file size
         if (file.size > 5 * 1024 * 1024) { // 5MB limit
-          throw new Error(`Image ${file.name} exceeds 5MB size limit`);
+          toast.error(`Image ${file.name} exceeds 5MB size limit`);
+          continue;
         }
 
         const formData = new FormData();
@@ -195,12 +195,14 @@ export default function ProductsPage() {
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.message || `Failed to upload image ${file.name}`);
+          toast.error(errorData.message || `Failed to upload image ${file.name}`);
+          continue;
         }
 
         const data = await response.json();
         if (!data.imageUrl) {
-          throw new Error(`Invalid response format for image ${file.name}`);
+          toast.error(`Invalid response format for image ${file.name}`);
+          continue;
         }
 
         uploadedUrls.push(data.imageUrl);
@@ -332,198 +334,7 @@ export default function ProductsPage() {
     }
   };
 
-  const ProductForm = () => (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="space-y-4">
-        <div>
-          <Label htmlFor="name" className="text-sm font-medium">Product Name</Label>
-          <Input
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleFormChange}
-            placeholder="Enter product name"
-            className="mt-1"
-            required
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="description" className="text-sm font-medium">Description</Label>
-          <Textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleFormChange}
-            placeholder="Enter product description"
-            className="mt-1 h-24"
-            required
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="price" className="text-sm font-medium">Price (₹)</Label>
-            <Input
-              id="price"
-              name="price"
-              type="number"
-              step="0.01"
-              min="0"
-              value={formData.price}
-              onChange={handleFormChange}
-              placeholder="0.00"
-              className="mt-1"
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="discountedPrice" className="text-sm font-medium">Discounted Price (₹)</Label>
-            <Input
-              id="discountedPrice"
-              name="discountedPrice"
-              type="number"
-              step="0.01"
-              min="0"
-              value={formData.discountedPrice}
-              onChange={handleFormChange}
-              placeholder="0.00"
-              className="mt-1"
-            />
-            <p className="text-xs text-muted-foreground mt-1">Leave empty if no discount</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="category" className="text-sm font-medium">Category</Label>
-            <Select
-              value={formData.category}
-              onValueChange={handleSelectChange}
-            >
-              <SelectTrigger className="mt-1">
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Flowers">Flowers</SelectItem>
-                <SelectItem value="Keychains">Keychains</SelectItem>
-                <SelectItem value="Religious gifts">Religious gifts</SelectItem>
-                <SelectItem value="Soft toys">Soft toys</SelectItem>
-                <SelectItem value="Home Decor">Home Decor</SelectItem>
-                <SelectItem value="Toys & Games">Toys & Games</SelectItem>
-                <SelectItem value="Kitchen & Dining">Kitchen & Dining</SelectItem>
-                <SelectItem value="Premium Gifts">Premium Gifts</SelectItem>
-                <SelectItem value="Other">Other</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="stock" className="text-sm font-medium">Stock</Label>
-            <Input
-              id="stock"
-              name="stock"
-              type="number"
-              min="0"
-              value={formData.stock}
-              onChange={handleFormChange}
-              placeholder="0"
-              className="mt-1"
-              required
-            />
-          </div>
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <div className="flex-1 font-medium text-sm">Featured Product</div>
-          <Switch
-            id="featured"
-            checked={formData.featured}
-            onCheckedChange={handleSwitchChange}
-          />
-        </div>
-
-        <Separator className="my-4" />
-
-        <div>
-          <Label className="text-sm font-medium">Product Images</Label>
-          <div className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              multiple
-              className="hidden"
-            />
-            
-            {imagePreviewUrls.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
-                {imagePreviewUrls.map((url, index) => (
-                  <div key={index} className="relative aspect-square">
-                    <img src={url} alt={`Preview ${index}`} className="object-cover w-full h-full rounded-md" />
-                    <button
-                      type="button"
-                      onClick={() => removeImage(index)}
-                      className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full -mt-2 -mr-2"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-4">
-                <ImageIcon className="h-10 w-10 text-gray-400 mb-2" />
-                <p className="text-sm text-gray-500">No images selected</p>
-              </div>
-            )}
-
-            {isUploading && (
-              <div className="w-full bg-gray-200 rounded-full h-2.5 mt-4">
-                <div 
-                  className="bg-primary h-2.5 rounded-full"
-                  style={{ width: `${uploadProgress}%` }}
-                ></div>
-                <p className="text-xs text-center mt-1">Uploading: {uploadProgress}%</p>
-              </div>
-            )}
-            
-            <Button 
-              type="button" 
-              variant="outline" 
-              className="mt-4"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <UploadCloud className="mr-2 h-4 w-4" />
-              {imagePreviewUrls.length > 0 ? 'Add More Images' : 'Upload Images'}
-            </Button>
-            
-            <p className="text-xs text-gray-500 mt-2">
-              Upload JPG, PNG, or GIF images (max 5MB each)
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <DialogFooter>
-        <Button 
-          type="button" 
-          variant="outline" 
-          onClick={() => {
-            setIsDialogOpen(false);
-            setEditingProduct(null);
-          }}
-        >
-          Cancel
-        </Button>
-        <Button type="submit" disabled={isUploading || saveLoading}>
-          {saveLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {editingProduct ? 'Update Product' : 'Add Product'}
-        </Button>
-      </DialogFooter>
-    </form>
-  );
-
+ 
   const DeleteConfirmationDialog = ({ id }: { id: string }) => (
     <Dialog open={deleteConfirmId === id} onOpenChange={() => setDeleteConfirmId(null)}>
       <DialogContent className="sm:max-w-md">
