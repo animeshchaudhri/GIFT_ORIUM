@@ -38,7 +38,7 @@ interface Order {
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user: authUser, token, isAuthenticated, isLoading } = useAuth();
+  const { user: authUser, token, isAuthenticated, isLoading, logout } = useAuth();
   const [user, setUser] = useState<User | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -203,6 +203,30 @@ export default function ProfilePage() {
           Back
         </Button>
         <h1 className="text-2xl font-bold">My Profile</h1>
+        <div className="ml-auto">
+          <Button
+            variant="destructive"
+            onClick={logout}
+            className="flex items-center gap-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            Logout
+          </Button>
+        </div>
       </div>
 
       <Tabs defaultValue="profile" className="space-y-6">
