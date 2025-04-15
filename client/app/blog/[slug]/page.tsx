@@ -203,7 +203,7 @@ export default function BlogPostPage({ params }: { params: any }) {
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                 <circle cx="12" cy="7" r="4"></circle>
               </svg>
-              {post.author.name}
+              {post.author?.name || "Anonymous"}
             </span>
             <span className="flex items-center gap-1">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -253,13 +253,13 @@ export default function BlogPostPage({ params }: { params: any }) {
               <div className="relative h-16 w-16 rounded-full overflow-hidden">
                 <Image 
                   src="/placeholder-user.jpg" 
-                  alt={post.author.name}
+                  alt={post.author?.name || "andy" }
                   fill
                   className="object-cover"
                 />
               </div>
               <div>
-                <h3 className="font-bold text-lg">{post.author.name}</h3>
+                <h3 className="font-bold text-lg">{post.author?.name || "Anonymous"}</h3>
                 <p className="text-gray-600">Gift Expert & Content Creator</p>
               </div>
             </div>
@@ -268,11 +268,11 @@ export default function BlogPostPage({ params }: { params: any }) {
       </div>
       
       {/* Related Posts */}
-      <div className="mt-16">
+      {/* <div className="mt-16">
         <h2 className="text-2xl font-bold mb-6">You might also like</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6"> */}
           {/* We'd map through related posts here if we had them */}
-          {[1, 2, 3].map((index) => (
+          {/* {[1, 2, 3].map((index) => (
             <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
               <div className="relative h-48">
                 <Image
@@ -295,7 +295,7 @@ export default function BlogPostPage({ params }: { params: any }) {
             </div>
           ))}
         </div>
-      </div>
-    </div>
+      </div>*/}
+    </div> 
   );
 }

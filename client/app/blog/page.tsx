@@ -199,7 +199,7 @@ export default function BlogPage() {
                     summary={filteredPosts[0].summary}
                     featuredImage={filteredPosts[0].featuredImage}
                     tags={filteredPosts[0].tags}
-                    author={filteredPosts[0].author.name}
+                    author={filteredPosts[0].author?.name || "Anonymous"}
                     date={formatDate(filteredPosts[0].createdAt)}
                     readTime={estimateReadTime(filteredPosts[0].content)}
                     variant="featured"
@@ -222,10 +222,11 @@ export default function BlogPage() {
                       summary={post.summary}
                       featuredImage={post.featuredImage}
                       tags={post.tags}
-                      author={post.author.name}
+                      author={post.author?.name || "Anonymous"}
                       date={formatDate(post.createdAt)}
                       readTime={estimateReadTime(post.content)}
                       index={index + 1}
+                     
                     />
                   </div>
                 ))}
@@ -250,7 +251,7 @@ export default function BlogPage() {
         </Tabs>
         
         {/* Newsletter Section - Redesigned with a more modern and attractive layout */}
-        <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-8 md:p-12 mt-20 relative overflow-hidden shadow-sm">
+        {/* <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-8 md:p-12 mt-20 relative overflow-hidden shadow-sm">
           <div className="absolute top-0 right-0 w-1/3 h-full opacity-10">
             <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full fill-pink-500">
               <path d="M45.3,-49.7C56.9,-34.1,63.2,-16.8,64.7,1.5C66.1,19.8,62.7,39.5,51.1,51.3C39.5,63.1,19.8,66.9,0.6,66.3C-18.5,65.7,-37,60.7,-52.6,48.9C-68.2,37,-80.8,18.5,-80.3,0.5C-79.7,-17.5,-65.9,-35,-50.2,-50.6C-34.5,-66.2,-17.3,-80.1,-0.2,-79.9C16.8,-79.7,33.7,-65.3,45.3,-49.7Z" transform="translate(100 100)" />
@@ -288,9 +289,9 @@ export default function BlogPage() {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
           {/* Popular Posts - Enhanced with a modern card layout and visual styling */}
-        <div className="mt-24 mb-16">
+        {/* <div className="mt-24 mb-16">
           <div className="flex items-center justify-between mb-10">
             <div className="flex items-center gap-3">
               <div className="h-8 w-2 bg-pink-500 rounded-full"></div>
@@ -316,7 +317,7 @@ export default function BlogPage() {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
       
       {/* Bottom CTA - Redesigned with more visual impact */}
@@ -335,7 +336,7 @@ export default function BlogPage() {
               <Button asChild size="lg" className="bg-pink-500 hover:bg-pink-600 py-6 px-8 text-lg shadow-lg hover:shadow-pink-500/20 transition-all">
                 <Link href="/products">Shop Now</Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10 hover:text-white py-6 px-8 text-lg backdrop-blur-sm">
+              <Button asChild variant="outline" size="lg" className="border-white/30 text-black hover:bg-white/10 hover:text-white py-6 px-8 text-lg backdrop-blur-sm">
                 <Link href="/contact">Contact Us</Link>
               </Button>
             </div>

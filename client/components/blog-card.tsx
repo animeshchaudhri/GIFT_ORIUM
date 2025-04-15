@@ -29,6 +29,7 @@ export default function BlogCard({
   readTime = "4 min read",
   index = 0,
   variant = "default",
+
 }: BlogCardProps) {
   const imageSrc =
     featuredImage || `/placeholder.svg?height=200&width=400&text=Blog${index + 1}`;
@@ -82,7 +83,7 @@ export default function BlogCard({
           variant="outline"
           className="rounded-full border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
         >
-          <Link href={`/blog`}>Read More</Link>
+          <Link href={`/blog/${slug}`}>Read More</Link>
         </Button>
       </div>
     </div>
