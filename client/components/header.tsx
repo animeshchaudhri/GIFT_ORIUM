@@ -11,7 +11,7 @@ export default function Header() {
         <div className="flex items-center space-x-4">
           <span>Welcome to Gift Orium Gift Shop</span>
           <span>|</span>
-          <span>Free Shipping on Orders 1000+</span>
+          <span>Free Shipping on Orders ₹1000+</span>
         </div>
         <div className="flex items-center space-x-4">
           <Link href="/about" className="hover:text-pink-500">
