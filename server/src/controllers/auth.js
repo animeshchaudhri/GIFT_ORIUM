@@ -1,4 +1,4 @@
-const User = require('../models/user');
+const User = require('../models/user.model');
 const jwt = require('jsonwebtoken');
 
 // Create JWT token
@@ -11,14 +11,14 @@ const createToken = (user) => {
 };
 
 // Create admin user if not exists
-const createAdminIfNotExists = async () => {
+exports.createAdminIfNotExists = async () => {
   try {
     const adminExists = await User.findOne({ role: 'admin' });
     if (!adminExists) {
       await User.create({
         name: 'Admin',
-        email: process.env.ADMIN_EMAIL || 'admin@giftorium.com',
-        password: process.env.ADMIN_PASSWORD || 'admin123',
+        email: process.env.ADMIN_EMAIL ,
+        password: process.env.ADMIN_PASSWORD,
         role: 'admin'
       });
       console.log('Admin user created successfully');
@@ -29,7 +29,7 @@ const createAdminIfNotExists = async () => {
 };
 
 // Call this function when server starts
-createAdminIfNotExists();
+
 
 const Cart = require('../models/cart.model');
 

@@ -3,7 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan');
-
+const { createAdminIfNotExists } = require('./controllers/auth.js');
 // Import routes
 const userRoutes = require('./routes/user.routes');
 const productRoutes = require('./routes/product.routes');
@@ -40,7 +40,8 @@ app.use((err, req, res, next) => {
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/gift-orium')
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('MongoDB connection error:', err));
-
+  
+createAdminIfNotExists();
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

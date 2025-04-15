@@ -403,14 +403,14 @@ export default function ProductDetails({ params }: { params: Promise<{ id: strin
                 <div className="flex items-baseline gap-3">
                   {product?.discountPrice ? (
                     <>
-                      <span className="text-4xl font-bold text-pink-600">${product.discountPrice.toFixed(2)}</span>
-                      <span className="text-xl text-gray-400 line-through">${product.price.toFixed(2)}</span>
+                      <span className="text-4xl font-bold text-pink-600">₹{product.discountPrice.toFixed(2)}</span>
+                      <span className="text-xl text-gray-400 line-through">₹{product.price.toFixed(2)}</span>
                       <Badge variant="secondary" className="ml-2">
                         {Math.round(((product.price - product.discountPrice) / product.price) * 100)}% OFF
                       </Badge>
                     </>
                   ) : (
-                    <span className="text-4xl font-bold text-gray-900">${product?.price.toFixed(2)}</span>
+                    <span className="text-4xl font-bold text-gray-900">₹{product?.price.toFixed(2)}</span>
                   )}
                 </div>
 

@@ -22,7 +22,7 @@ const productSchema = new mongoose.Schema({
   category: {
     type: String,
     required: [true, 'Please provide product category'],
-    enum: ['Tech Gifts', 'Eco Gifts', 'Beauty Gifts', 'Premium Gifts', 'Other']
+    
   },
   // Main product image
   imageUrl: {

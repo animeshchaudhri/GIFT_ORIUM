@@ -7,7 +7,9 @@ const { uploadAvatar } = require('../config/cloudinary');
 // Register new user
 router.post('/register', async (req, res) => {
   try {
-    const user = new User(req.body);
+    // Create a new user object but explicitly set role to 'user' regardless of what was in the request
+    const userData = { ...req.body, role: 'user' };
+    const user = new User(userData);
     await user.save();
     const token = user.generateAuthToken();
     res.status(201).json({ user, token });
