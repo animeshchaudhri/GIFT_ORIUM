@@ -396,9 +396,13 @@ export default function ProductsPage() {
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Tech Gifts">Tech Gifts</SelectItem>
-                <SelectItem value="Eco Gifts">Eco Gifts</SelectItem>
-                <SelectItem value="Beauty Gifts">Beauty Gifts</SelectItem>
+                <SelectItem value="Flowers">Flowers</SelectItem>
+                <SelectItem value="Keychains">Keychains</SelectItem>
+                <SelectItem value="Religious gifts">Religious gifts</SelectItem>
+                <SelectItem value="Soft toys">Soft toys</SelectItem>
+                <SelectItem value="Home Decor">Home Decor</SelectItem>
+                <SelectItem value="Toys & Games">Toys & Games</SelectItem>
+                <SelectItem value="Kitchen & Dining">Kitchen & Dining</SelectItem>
                 <SelectItem value="Premium Gifts">Premium Gifts</SelectItem>
                 <SelectItem value="Other">Other</SelectItem>
               </SelectContent>

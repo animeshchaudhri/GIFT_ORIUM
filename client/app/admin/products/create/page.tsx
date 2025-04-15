@@ -16,7 +16,7 @@ const categories = [
   'Flowers',
   'Keychains',
   'Religious gifts',
-  'Beauty Gifts',
+  'Soft toys',
   'Home Decor',
   "Toys & Games",
   'Kitchen & Dining',

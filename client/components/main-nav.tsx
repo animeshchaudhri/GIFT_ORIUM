@@ -55,14 +55,14 @@ export default function MainNav() {
         <DropdownMenu
           label="Categories"
           links={[
-            { href: "/products?category=flowers", label: "Flowers" },
-            { href: "/products?category=keychains", label: "Keychains" },
-            { href: "/products?category=religious-gifts", label: "Religious gifts" },
-            { href: "/products?category=beauty-gifts", label: "Beauty Gifts" },
-            { href: "/products?category=home-decor", label: "Home Decor" },
-            { href: "/products?category=toys-games", label: "Toys & Games" },
-            { href: "/products?category=kitchen-dining", label: "Kitchen & Dining" },
-            { href: "/products?category=premium-gifts", label: "Premium Gifts" },
+            { href: "/products?tag=flowers", label: "Flowers" },
+            { href: "/products?tag=keychains", label: "Keychains" },
+            { href: "/products?tag=religious-gifts", label: "Religious gifts" },
+            { href: "/products?tag=beauty-gifts", label: "Beauty Gifts" },
+            { href: "/products?tag=home-decor", label: "Home Decor" },
+            { href: "/products?tag=soft toys", label: "Soft toys" },
+            { href: "/products?tag=kitchen-dining", label: "Kitchen & Dining" },
+            { href: "/products?tag=premium-gifts", label: "Premium Gifts" },
           ]}
         />
 

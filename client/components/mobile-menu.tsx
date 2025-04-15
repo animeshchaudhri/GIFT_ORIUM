@@ -29,14 +29,14 @@ export default function MobileMenu() {
       link: "/products",
       hasSubmenu: true,
       submenu: [
-        { name: "Flowers", link: "/products?category=flowers" },
-        { name: "Keychains", link: "/products?category=keychains" },
-        { name: "Religious gifts", link: "/products?category=religious-gifts" },
-        { name: "Beauty Gifts", link: "/products?category=beauty-gifts" },
-        { name: "Home Decor", link: "/products?category=home-decor" },
-        { name: "Toys & Games", link: "/products?category=toys-games" },
-        { name: "Kitchen & Dining", link: "/products?category=kitchen-dining" },
-        { name: "Premium Gifts", link: "/products?category=premium-gifts" }
+        { name: "Flowers", link: "/products?tag=flowers" },
+        { name: "Keychains", link: "/products?tag=keychains" },
+        { name: "Religious gifts", link: "/products?tag=religious-gifts" },
+        { name: "Beauty Gifts", link: "/products?tag=beauty-gifts" },
+        { name: "Home Decor", link: "/products?tag=home-decor" },
+        { name: "Soft toys", link: "/products?tag=soft toys" },
+        { name: "Kitchen & Dining", link: "/products?tag=kitchen-dining" },
+        { name: "Premium Gifts", link: "/products?tag=premium-gifts" }
       ],
     },
     {

@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Check, Heart, Users, Sparkles, Shield } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { Description } from "@radix-ui/react-toast";
 
 export default function AboutPage() {
   const values = [
@@ -14,8 +15,8 @@ export default function AboutPage() {
   ];
 
   const team = [
-    { name: "Sahil Bhasin", role: "Co-founder", image: "/placeholder-user.jpg" },
-    { name: "Ravi Bhasin", role: "Co-founder", image: "/placeholder-user.jpg" },
+    { name: "Ravi Bhasin", role: "Founder", image: "/owner.png", description: "Expert in business development and customer relations with years of experience in various fields." },
+    { name: "Sahil Bhasin", role: "Co-founder", image: "/Owner2.png", description: "Passionate about creating innovative gifting solutions and enhancing customer experiences." },
   ];
 
   const stats = [
@@ -52,6 +53,67 @@ export default function AboutPage() {
       </div>
 
       {/* Values Section */}
+    
+
+      {/* Team Section */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-16">
+            <h2 className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">Meet Our Team</h2>
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">The passionate individuals behind Gift_Orium, dedicated to making your gifting experience exceptional.</p>
+          </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+            {team.map((member, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.2 }}
+                viewport={{ once: true }}
+                className="group relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300">
+                <div className="relative w-56 h-56 mx-auto mb-6 overflow-hidden rounded-2xl border-4 border-purple-100 group-hover:border-purple-200 transition-colors duration-300">
+                  <Image
+                    src={member.image}
+                    alt={member.name}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <h3 className="text-2xl font-bold mb-2 text-gray-800">{member.name}</h3>
+                <p className="text-purple-600 font-medium mb-4">{member.role}</p>
+                <p className="text-gray-600 text-sm">{member.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Mission Section */}
+      <section className="py-24 bg-gradient-to-r from-purple-100 via-pink-50 to-pink-100 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/placeholder.svg')] opacity-5 bg-repeat rotate-3"></div>
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="max-w-4xl mx-auto">
+            <h2 className="text-4xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">Our Mission</h2>
+            <p className="text-2xl text-gray-700 leading-relaxed">
+              To create memorable gifting experiences by offering carefully curated, high-quality products
+              at competitive prices while providing exceptional customer service and a seamless shopping journey.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+   
+
       <section className="py-16 bg-white">
     <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">Our Values</h2>
@@ -108,66 +170,8 @@ export default function AboutPage() {
           </motion.div>
         </div>
       </section>
-
-      {/* Team Section */}
-      <section className="py-24 bg-white">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">Meet Our Team</h2>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">The passionate individuals behind Gift_Orium, dedicated to making your gifting experience exceptional.</p>
-          </motion.div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-5xl mx-auto">
-            {team.map((member, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.2 }}
-                viewport={{ once: true }}
-                className="group relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300">
-                <div className="relative w-56 h-56 mx-auto mb-6 overflow-hidden rounded-2xl border-4 border-purple-100 group-hover:border-purple-200 transition-colors duration-300">
-                  <Image
-                    src={member.image}
-                    alt={member.name}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <h3 className="text-2xl font-bold mb-2 text-gray-800">{member.name}</h3>
-                <p className="text-purple-600 font-medium mb-4">{member.role}</p>
-                <p className="text-gray-600 text-sm">Passionate about creating memorable gifting experiences and ensuring customer satisfaction.</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Mission Section */}
-      <section className="py-24 bg-gradient-to-r from-purple-100 via-pink-50 to-pink-100 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/placeholder.svg')] opacity-5 bg-repeat rotate-3"></div>
-        <div className="container mx-auto px-4 text-center relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="max-w-4xl mx-auto">
-            <h2 className="text-4xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">Our Mission</h2>
-            <p className="text-2xl text-gray-700 leading-relaxed">
-              To create memorable gifting experiences by offering carefully curated, high-quality products
-              at competitive prices while providing exceptional customer service and a seamless shopping journey.
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section className="py-24 bg-white">
+         {/* Contact Section */}
+         <section className="py-24 bg-white">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

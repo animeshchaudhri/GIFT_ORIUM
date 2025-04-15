@@ -20,6 +20,7 @@ interface Product {
   stock: number;
   featured: boolean;
   images: string[];
+  tags: string[];
 }
 
 interface FormData {
@@ -31,6 +32,7 @@ interface FormData {
   stock: string;
   featured: boolean;
   images?: string[];
+  tags: string;
 }
 
 export default function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
@@ -47,6 +49,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     stock: '',
     featured: false,
     images: [],
+    tags: '',
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -87,6 +90,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           stock: data.stock.toString(),
           featured: data.featured,
           images: data.images,
+          tags: data.tags ? data.tags.join(', ') : '',
         });
       } catch (err) {
         setError('Failed to load product' + err);
@@ -277,12 +281,16 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Tech Gifts">Tech Gifts</SelectItem>
-                  <SelectItem value="Eco Gifts">Eco Gifts</SelectItem>
-                  <SelectItem value="Beauty Gifts">Beauty Gifts</SelectItem>
-                  <SelectItem value="Premium Gifts">Premium Gifts</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
-                </SelectContent>
+                <SelectItem value="Flowers">Flowers</SelectItem>
+                <SelectItem value="Keychains">Keychains</SelectItem>
+                <SelectItem value="Religious gifts">Religious gifts</SelectItem>
+                <SelectItem value="Soft toys">Soft toys</SelectItem>
+                <SelectItem value="Home Decor">Home Decor</SelectItem>
+                <SelectItem value="Toys & Games">Toys & Games</SelectItem>
+                <SelectItem value="Kitchen & Dining">Kitchen & Dining</SelectItem>
+                <SelectItem value="Premium Gifts">Premium Gifts</SelectItem>
+                <SelectItem value="Other">Other</SelectItem>
+              </SelectContent>
               </Select>
             </div>
             <div>
@@ -299,6 +307,19 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                 required
               />
             </div>
+          </div>
+
+          <div>
+            <Label htmlFor="tags" className="text-sm font-medium">Tags</Label>
+            <Input
+              id="tags"
+              name="tags"
+              value={formData.tags}
+              onChange={handleFormChange}
+              placeholder="Enter tags separated by commas"
+              className="mt-1 w-full"
+            />
+            <p className="text-xs text-muted-foreground mt-1">Separate tags with commas</p>
           </div>
 
           <div className="flex items-center space-x-2">

@@ -34,7 +34,8 @@ function Premium() {
         
         const responseData = await response.json();
         const productsArray = responseData.data || [];
-        setProducts(productsArray);
+        // Limit to 8 products
+        setProducts(productsArray.slice(0, 8));
       } catch (err) {
         setError('Failed to load premium products');
       } finally {

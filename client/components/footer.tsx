@@ -57,12 +57,12 @@ function Footer() {
           <h3 className="font-bold text-lg mb-4">Our Products</h3>
           <ul className="space-y-2 text-gray-400">
             {[
-              { name: "Flowers", href: "/products?category=flowers" },
-              { name: "Keychains", href: "/products?category=keychains" },
-              { name: "Religious gifts", href: "/products?category=religious-gifts" },
-              { name: "Beauty Gifts", href: "/products?category=beauty-gifts" },
-              { name: "Home Decor", href: "/products?category=home-decor" },
-              { name: "Toys & Games", href: "/products?category=toys-games" },
+              { name: "Flowers", href: "/products?tag=flowers" },
+              { name: "Keychains", href: "/products?tag=keychains" },
+              { name: "Religious Gifts", href: "/products?tag=religious-gifts" },
+              { name: "Soft toys", href: "/products?tag=soft toys" },
+              { name: "Home Decor", href: "/products?tag=home-decor" },
+              { name: "Toys & Games", href: "/products?tag=toys-games" },
             ].map((link, index) => (
               <li key={index}>
                 <Link href={link.href} className="hover:text-pink-500 transition-colors flex items-center">
