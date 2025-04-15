@@ -102,3 +102,6 @@
   @apply max-w-screen-lg mx-auto;
 }
 
+body{
+  overflow-x: hidden;
+}
