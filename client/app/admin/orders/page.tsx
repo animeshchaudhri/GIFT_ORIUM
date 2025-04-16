@@ -245,10 +245,10 @@ export default function OrdersPage() {
                       <h4 className="font-medium mb-2">Customer Details</h4>
                       <div className="space-y-1">
                         <p className="text-sm">
-                          <span className="text-gray-500">Name:</span> {order.user.name}
+                          <span className="text-gray-500">Name:</span> {order.user?.name || 'N/A'}
                         </p>
                         <p className="text-sm">
-                          <span className="text-gray-500">Email:</span> {order.user.email}
+                          <span className="text-gray-500">Email:</span> {order.user?.email || 'N/A'}
                         </p>
                         <p className="text-sm">
                           <span className="text-gray-500">Payment Method:</span> {order.paymentMethod}
@@ -353,7 +353,8 @@ export default function OrdersPage() {
                           <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Price</th>
                           <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Total</th>
                         </tr>
-                      </thead>                      <tbody className="bg-white divide-y divide-gray-200">
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
                         {order.items?.map((item, index) => {
                           // Check if item.product is null or undefined
                           if (!item.product) {

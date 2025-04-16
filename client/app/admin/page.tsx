@@ -287,8 +287,8 @@ export default function AdminDashboard() {
                 recentOrders.map((order) => (
                   <div key={order._id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <div>
-                      <p className="font-medium">{order.user.name}</p>
-                      <p className="text-sm text-gray-500">{order.user.email}</p>
+                      <p className="font-medium">{order.user?.name || 'Unknown User'}</p>
+                      <p className="text-sm text-muted-foreground">{order.user?.email || 'No email provided'}</p>
                     </div>
                     <div className="text-right">
                       <p className="font-medium">₹{order.totalAmount.toFixed(2)}</p>
