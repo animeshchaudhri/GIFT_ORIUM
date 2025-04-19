@@ -1,9 +1,22 @@
+
 import Link from "next/link";
+
 import { ShoppingCart, Search, Heart, User } from "lucide-react";
 import MobileMenu from "@/components/mobile-menu";
 import MainNav from "@/components/main-nav";
 
 export default function Header() {
+  
+
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const searchInput = e.currentTarget.elements.namedItem('search') as HTMLInputElement;
+    const searchTerm = searchInput.value;
+    if (searchTerm.trim()) {
+     window.location.href = `/products?category=${encodeURIComponent(searchTerm.trim())}`;
+    }
+  };
+
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
       {/* Top Bar */}
@@ -42,16 +55,20 @@ export default function Header() {
           </Link>
         </div>
 
-        <div className="relative w-full md:w-1/3 mb-4 md:mb-0">
+        <form onSubmit={handleSearch} className="relative w-full md:w-1/3 mb-4 md:mb-0">
           <input
             type="text"
+            name="search"
             placeholder="Search for gifts..."
             className="w-full py-2 px-4 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-500"
           />
-          <button className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-pink-500">
+          <button 
+            type="submit"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-pink-500"
+          >
             <Search size={18} />
           </button>
-        </div>
+        </form>
 
         <div className="flex items-center space-x-6">
           <Link

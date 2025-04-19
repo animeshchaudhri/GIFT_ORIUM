@@ -230,8 +230,7 @@ export default function OrdersPage() {
                         </div>
                         <div className="flex justify-between text-sm">
                           <span className="text-muted-foreground">Shipping</span>
-                          <span>Free</span>
-                        </div>
+                          <span>Extra charges may or may not apply</span>                        </div>
                         <Separator className="my-2" />
                         <div className="flex justify-between font-medium">
                           <span>Total</span>

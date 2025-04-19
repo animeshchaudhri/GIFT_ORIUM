@@ -85,8 +85,13 @@ export default function ProductsPage() {
   // Handle URL params for tag filtering on initial load
   useEffect(() => {
     const tagParam = searchParams.get('tag');
+    const CategoryParam = searchParams.get('category');
+    if (CategoryParam) {
+      setSearchTerm(decodeURIComponent(CategoryParam));
+    }
     if (tagParam) {
-      setSelectedTag(decodeURIComponent(tagParam));
+
+      setSearchTerm(decodeURIComponent(tagParam));
     }
   }, [searchParams]);
 
@@ -116,7 +121,7 @@ export default function ProductsPage() {
 
   // Fuse.js fuzzy search setup
   const fuse = new Fuse(products, {
-    keys: ['name', 'description', 'tags'],
+    keys: ['name', 'description', 'tags' , 'category'],
     threshold: 0.3,
   });
 
@@ -150,7 +155,7 @@ export default function ProductsPage() {
       }
 
       const matchesCategory =
-        selectedCategory === 'all' || product.category === selectedCategory;
+        selectedCategory === 'all' || product.category == selectedCategory;
 
       return matchesCategory && matchesTag && matchesPrice;
     });
