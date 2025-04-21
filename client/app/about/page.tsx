@@ -27,28 +27,20 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
       {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-purple-100 via-pink-50 to-pink-100 py-32">
-        <div className="absolute inset-0 bg-[url('/placeholder.svg')] opacity-10 bg-repeat"></div>
+      <div className="relative overflow-hidden bg-gradient-to-r from-purple-100 via-pink-50 to-pink-100 py-20">
+        <div className="absolute inset-0 bg-[url('/placeholder.svg')] opacity-5 bg-repeat transform rotate-3 scale-110"></div>
         <div className="container mx-auto px-4 text-center relative z-10">
           <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-5xl md:text-6xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600"
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-pink-500 to-pink-600"
           >
-            About Gift_Orium
+            About Gift Orium
           </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto leading-relaxed"
-          >
-            We're passionate about helping you find the perfect gift for every occasion.
-            Our curated collection brings joy to both givers and receivers.
-          </motion.p>
+        
         </div>
       </div>
 
@@ -56,7 +48,7 @@ export default function AboutPage() {
     
 
       {/* Team Section */}
-      <section className="py-24 bg-white">
+      <section className="py-32 bg-white/50 backdrop-blur-sm">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -71,22 +63,22 @@ export default function AboutPage() {
             {team.map((member, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.2 }}
+                transition={{ duration: 0.8, delay: index * 0.2, ease: "easeOut" }}
                 viewport={{ once: true }}
-                className="group relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300">
-                <div className="relative w-56 h-56 mx-auto mb-6 overflow-hidden rounded-2xl border-4 border-purple-100 group-hover:border-purple-200 transition-colors duration-300">
+                className="group relative bg-white rounded-3xl p-10 shadow-lg hover:shadow-2xl transition-all duration-500 border border-purple-100/50">
+                <div className="relative w-64 h-64 mx-auto mb-8 overflow-hidden rounded-3xl border-4 border-purple-100 group-hover:border-purple-200 transition-colors duration-500">
                   <Image
                     src={member.image}
                     alt={member.name}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                 </div>
-                <h3 className="text-2xl font-bold mb-2 text-gray-800">{member.name}</h3>
-                <p className="text-purple-600 font-medium mb-4">{member.role}</p>
-                <p className="text-gray-600 text-sm">{member.description}</p>
+                <h3 className="text-2xl font-bold mb-3 text-gray-800 group-hover:text-purple-600 transition-colors duration-300">{member.name}</h3>
+                <p className="text-purple-600 font-medium mb-5 text-lg">{member.role}</p>
+                <p className="text-gray-600 text-lg leading-relaxed">{member.description}</p>
               </motion.div>
             ))}
           </div>
@@ -104,7 +96,7 @@ export default function AboutPage() {
             viewport={{ once: true }}
             className="max-w-4xl mx-auto">
             <h2 className="text-4xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">Our Mission</h2>
-            <p className="text-2xl text-gray-700 leading-relaxed">
+            <p className="text-xl text-gray-700 leading-relaxed">
               To create memorable gifting experiences by offering carefully curated, high-quality products
               at competitive prices while providing exceptional customer service and a seamless shopping journey.
             </p>
@@ -114,57 +106,57 @@ export default function AboutPage() {
 
    
 
-      <section className="py-16 bg-white">
-    <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Our Values</h2>
+      <section className="py-24 bg-white/80 backdrop-blur-sm">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-pink-500 to-pink-600">Our Values</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {values.map((value, index) => (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1, ease: "easeOut" }}
+                viewport={{ once: true }}
                 key={index}
               >
-                <Card className="p-8 hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-purple-200 bg-white/50 backdrop-blur-sm">
-                <div className="flex items-center mb-4">
-                  <div className="bg-gradient-to-br from-purple-500 to-pink-500 p-3 rounded-xl mr-4 shadow-lg">
-                    {index === 0 ? <Heart className="h-6 w-6 text-white" /> :
-                     index === 1 ? <Users className="h-6 w-6 text-white" /> :
-                     index === 2 ? <Sparkles className="h-6 w-6 text-white" /> :
-                     <Shield className="h-6 w-6 text-white" />}
+                <Card className="p-6 hover:shadow-lg transition-all duration-300 border border-transparent hover:border-purple-200 bg-white/90 backdrop-blur-sm rounded-2xl group">
+                  <div className="flex items-center mb-4">
+                    <div className="bg-gradient-to-br from-purple-500 to-pink-500 p-3 rounded-xl mr-4 shadow-md group-hover:shadow-lg transition-shadow duration-300">
+                      {index === 0 ? <Heart className="h-6 w-6 text-white" /> :
+                       index === 1 ? <Users className="h-6 w-6 text-white" /> :
+                       index === 2 ? <Sparkles className="h-6 w-6 text-white" /> :
+                       <Shield className="h-6 w-6 text-white" />}
+                    </div>
+                    <h3 className="font-semibold text-xl group-hover:text-purple-600 transition-colors duration-300">{value.title}</h3>
                   </div>
-                  <h3 className="font-semibold text-xl">{value.title}</h3>
-                </div>
-                <p className="text-gray-600">{value.description}</p>
-              </Card>
-           
-            </motion.div>
+                  <p className="text-gray-600 text-base leading-relaxed">{value.description}</p>
+                </Card>
+              </motion.div>
             ))}
-        </div>
+          </div>
         </div>
       </section>
 
       {/* Stats Section */}
-      <section className="py-24 bg-gradient-to-b from-white to-gray-50">
+      <section className="py-24 bg-gradient-to-b from-white via-purple-50 to-white">
         <div className="container mx-auto px-4">
           <motion.div 
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {stats.map((stat, index) => (
               <motion.div
                 key={index}
-                initial={{ scale: 0.9, opacity: 0 }}
+                initial={{ scale: 0.95, opacity: 0 }}
                 whileInView={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
                 viewport={{ once: true }}
-                className="p-8 text-center bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100">
-                <div className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600 mb-3">
+                className="p-6 text-center bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 border border-purple-100/50 group">
+                <div className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-pink-500 to-pink-600 mb-3 group-hover:scale-105 transition-transform duration-300">
                   {stat.value}
                 </div>
-                <div className="text-gray-600 font-medium">{stat.label}</div>
+                <div className="text-gray-600 font-medium text-lg">{stat.label}</div>
               </motion.div>
             ))}
           </motion.div>

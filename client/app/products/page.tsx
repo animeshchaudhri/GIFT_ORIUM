@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Fuse from 'fuse.js';
-import ProductCard from '@/components/product-card';
-import { Input } from '@/components/ui/input';
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Fuse from "fuse.js";
+import ProductCard from "@/components/product-card";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Home, ChevronRight, Search, ShoppingCart } from 'lucide-react';
-import Link from 'next/link';
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Home, ChevronRight, Search, ShoppingCart } from "lucide-react";
+import Link from "next/link";
 
 interface Product {
   _id: string;
@@ -31,6 +31,7 @@ interface Product {
   tags: string[];
   stock: number;
   featured: boolean;
+  createdAt?: string;
 }
 
 export default function ProductsPage() {
@@ -38,101 +39,94 @@ export default function ProductsPage() {
   const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedTag, setSelectedTag] = useState('');
-  const [sortBy, setSortBy] = useState('featured');
-  const [priceRange, setPriceRange] = useState('all');
+  const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedTag, setSelectedTag] = useState("");
+  const [sortBy, setSortBy] = useState("featured");
+  const [priceRange, setPriceRange] = useState("all");
   const [showAllTags, setShowAllTags] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const [cameFromUrl, setCameFromUrl] = useState(false);
 
   const categories = [
-    'All',
-    'Flowers',
-    'Keychains',
-    'Religious gifts',
-    'Soft toys',
-    'Home Decor',
-    'Toys & Games',
-    'Kitchen & Dining',
-    'Premium Gifts',
-    'Other',
+    "All",
+    "Flowers",
+    "Keychains",
+    "Religious gifts",
+    "Soft toys",
+    "Home Decor",
+    "Toys & Games",
+    "Kitchen & Dining",
+    "Premium Gifts",
+    "Other",
   ];
 
-  // Fetch all products (used for initial load and search refreshes)
   const fetchProducts = async () => {
     setLoading(true);
     try {
       const url = `${process.env.NEXT_PUBLIC_API_URL}/api/products`;
       const response = await fetch(url);
-      if (!response.ok) throw new Error('Failed to fetch products');
+      if (!response.ok) throw new Error("Failed to fetch products");
       const data = await response.json();
       setProducts(data.data || []);
     } catch (err) {
-      setError('Failed to load products');
+      setError("Failed to load products");
       setProducts([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Initial load
   useEffect(() => {
     fetchProducts();
   }, []);
 
-  // Handle URL params for tag filtering on initial load
-  useEffect(() => {
-    const tagParam = searchParams.get('tag');
-    const CategoryParam = searchParams.get('category');
-    if (CategoryParam) {
-      setSearchTerm(decodeURIComponent(CategoryParam));
+  const resetUrlFiltersIfNeeded = () => {
+    if (cameFromUrl) {
+      setSelectedTag("");
+      setCameFromUrl(false);
+      router.push("/products");
     }
-    if (tagParam) {
+  };
 
-      setSearchTerm(decodeURIComponent(tagParam));
-    }
+  useEffect(() => {
+    const tagParam = searchParams.get("tag");
+    const categoryParam = searchParams.get("category");
+    if (categoryParam) setSearchTerm(decodeURIComponent(categoryParam));
+    if (tagParam) setSearchTerm(decodeURIComponent(tagParam));
   }, [searchParams]);
 
-  // Get all tags from products
-  const allTags = Array.from(new Set(products.flatMap(p => p.tags || []))).filter(Boolean);
+  const allTags = Array.from(
+    new Set(products.flatMap((p) => p.tags || []))
+  ).filter(Boolean);
   const displayedTags = showAllTags ? allTags : allTags.slice(0, 8);
 
-  // Search handler with debounce
   useEffect(() => {
     if (isSearching) {
       const handler = setTimeout(() => {
-        // Reset filters when searching
         if (searchTerm) {
-          setSelectedCategory('all');
-          setSelectedTag('');
-          setPriceRange('all');
-          
-          // Only make a new API call for fresh products when searching
+          setSelectedCategory("all");
+          setSelectedTag("");
+          setPriceRange("all");
           fetchProducts();
         }
         setIsSearching(false);
-      }, 500); // 500ms debounce
-      
+      }, 500);
       return () => clearTimeout(handler);
     }
   }, [isSearching, searchTerm]);
 
-  // Fuse.js fuzzy search setup
   const fuse = new Fuse(products, {
-    keys: ['name', 'description', 'tags' , 'category'],
+    keys: ["name", "description", "tags", "category"],
     threshold: 0.3,
   });
 
-  // Get filtered products based on search and filters
   const getFilteredProducts = () => {
-    // Apply search first using Fuse.js if there's a search term
-    let filtered = searchTerm 
-      ? fuse.search(searchTerm).map(result => result.item) 
+    let filtered = searchTerm
+      ? fuse.search(searchTerm).map((result) => result.item)
       : products;
-    
-    // Then apply filters
+
     return filtered.filter((product: any) => {
       const matchesTag =
         !selectedTag || (product.tags && product.tags.includes(selectedTag));
@@ -140,22 +134,22 @@ export default function ProductsPage() {
       let matchesPrice = true;
       const price = product.discountPrice || product.price;
       switch (priceRange) {
-        case 'under500':
+        case "under500":
           matchesPrice = price < 500;
           break;
-        case '500to1000':
+        case "500to1000":
           matchesPrice = price >= 500 && price <= 1000;
           break;
-        case '1000to2000':
+        case "1000to2000":
           matchesPrice = price > 1000 && price <= 2000;
           break;
-        case 'over2000':
+        case "over2000":
           matchesPrice = price > 2000;
           break;
       }
 
       const matchesCategory =
-        selectedCategory === 'all' || product.category == selectedCategory;
+        selectedCategory === "all" || product.category === selectedCategory;
 
       return matchesCategory && matchesTag && matchesPrice;
     });
@@ -163,54 +157,45 @@ export default function ProductsPage() {
 
   const filteredProducts = getFilteredProducts();
 
-  // Sort filtered products
   const sortedProducts = [...filteredProducts].sort((a: any, b: any) => {
     const priceA = a.discountPrice || a.price;
     const priceB = b.discountPrice || b.price;
-    
+
     switch (sortBy) {
-      case 'price_asc':
+      case "price_asc":
         return priceA - priceB;
-      case 'price_desc':
+      case "price_desc":
         return priceB - priceA;
-      case 'rating':
+      case "rating":
         return b.rating - a.rating;
-      case 'newest':
-        return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+      case "newest":
+        return (
+          new Date(b.createdAt || 0).getTime() -
+          new Date(a.createdAt || 0).getTime()
+        );
       default:
-        return a.featured ? -1 : 1; // Featured items first
+        return a.featured ? -1 : 1;
     }
   });
 
-  // Handle tag selection
   const handleTagSelect = (tag: string) => {
     setSelectedTag(tag);
     if (tag) {
       router.push(`/products?tag=${encodeURIComponent(tag)}`);
     } else {
-      router.push('/products');
+      router.push("/products");
     }
   };
 
-  // Reset all filters and search
   const handleReset = () => {
-    setSearchTerm('');
-    setSelectedCategory('all');
-    setPriceRange('all');
-    setSortBy('featured');
-    setSelectedTag('');
-    router.push('/products');
-    // Refresh products
+    setSearchTerm("");
+    setSelectedCategory("all");
+    setPriceRange("all");
+    setSortBy("featured");
+    setSelectedTag("");
+    router.push("/products");
     fetchProducts();
   };
-
-  // if (loading) {
-  //   return (
-  //     <div className="container mx-auto px-4 py-12 flex justify-center">
-  //       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
-  //     </div>
-  //   );
-  // }
 
   if (error) {
     return (
@@ -226,7 +211,10 @@ export default function ProductsPage() {
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
         {/* Breadcrumb */}
-        <nav className="flex mb-8 text-sm text-gray-600" aria-label="Breadcrumb">
+        <nav
+          className="flex mb-8 text-sm text-gray-600"
+          aria-label="Breadcrumb"
+        >
           <ol className="flex items-center space-x-2">
             <li>
               <Link href="/" className="hover:text-pink-600 flex items-center">
@@ -238,7 +226,10 @@ export default function ProductsPage() {
             <li className="text-pink-600 font-medium">Products</li>
           </ol>
           <div className="ml-auto flex items-center space-x-2">
-            <Link href="/cart" className="text-gray-600 hover:text-pink-600 flex items-center">
+            <Link
+              href="/cart"
+              className="text-gray-600 hover:text-pink-600 flex items-center"
+            >
               <ShoppingCart className="h-4 w-4 mr-1" />
               Cart
             </Link>
@@ -248,7 +239,6 @@ export default function ProductsPage() {
         <Card className="p-6 mb-8">
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* Search - Updated to trigger search mode */}
               <div className="relative">
                 <Input
                   type="text"
@@ -264,8 +254,13 @@ export default function ProductsPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               </div>
 
-              {/* Category Filter */}
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <Select
+                value={selectedCategory}
+                onValueChange={(value) => {
+                  setSelectedCategory(value);
+                  setSearchTerm(""); // reset search when category is changed
+                }}
+              >
                 <SelectTrigger className="h-10">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
@@ -273,7 +268,7 @@ export default function ProductsPage() {
                   {categories.map((category) => (
                     <SelectItem
                       key={category.toLowerCase()}
-                      value={category === 'All' ? 'all' : category}
+                      value={category === "All" ? "all" : category}
                     >
                       {category}
                     </SelectItem>
@@ -281,7 +276,6 @@ export default function ProductsPage() {
                 </SelectContent>
               </Select>
 
-              {/* Price Filter */}
               <Select value={priceRange} onValueChange={setPriceRange}>
                 <SelectTrigger className="h-10">
                   <SelectValue placeholder="Price range" />
@@ -295,7 +289,6 @@ export default function ProductsPage() {
                 </SelectContent>
               </Select>
 
-              {/* Sort + Reset */}
               <div className="flex gap-2">
                 <Select value={sortBy} onValueChange={setSortBy}>
                   <SelectTrigger className="h-10">
@@ -303,8 +296,12 @@ export default function ProductsPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="featured">Featured</SelectItem>
-                    <SelectItem value="price_asc">Price: Low to High</SelectItem>
-                    <SelectItem value="price_desc">Price: High to Low</SelectItem>
+                    <SelectItem value="price_asc">
+                      Price: Low to High
+                    </SelectItem>
+                    <SelectItem value="price_desc">
+                      Price: High to Low
+                    </SelectItem>
                     <SelectItem value="rating">Top Rated</SelectItem>
                     <SelectItem value="newest">Newest</SelectItem>
                   </SelectContent>
@@ -319,21 +316,20 @@ export default function ProductsPage() {
               </div>
             </div>
 
-            {/* Tags */}
             {allTags.length > 0 && (
               <div className="space-y-2">
                 <div className="flex flex-wrap gap-2">
                   <Badge
-                    variant={selectedTag === '' ? 'default' : 'outline'}
+                    variant={selectedTag === "" ? "default" : "outline"}
                     className="cursor-pointer"
-                    onClick={() => handleTagSelect('')}
+                    onClick={() => handleTagSelect("")}
                   >
                     All Tags
                   </Badge>
                   {displayedTags.map((tag) => (
                     <Badge
                       key={tag}
-                      variant={selectedTag === tag ? 'default' : 'outline'}
+                      variant={selectedTag === tag ? "default" : "outline"}
                       className="cursor-pointer"
                       onClick={() => handleTagSelect(tag)}
                     >
@@ -348,7 +344,9 @@ export default function ProductsPage() {
                     onClick={() => setShowAllTags(!showAllTags)}
                     className="text-xs text-gray-500 hover:text-pink-500"
                   >
-                    {showAllTags ? 'Show Less' : `Show ${allTags.length - 8} More Tags`}
+                    {showAllTags
+                      ? "Show Less"
+                      : `Show ${allTags.length - 8} More Tags`}
                   </Button>
                 )}
               </div>
@@ -363,7 +361,7 @@ export default function ProductsPage() {
           </div>
         ) : sortedProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {sortedProducts.map((product:any) => (
+            {sortedProducts.map((product: any) => (
               <ProductCard
                 key={product._id}
                 product={product}
@@ -376,8 +374,12 @@ export default function ProductsPage() {
             <div className="mb-4">
               <Search className="h-12 w-12 text-gray-400 mx-auto" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
-            <p className="text-gray-600">Try adjusting your search or filter criteria</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No products found
+            </h3>
+            <p className="text-gray-600">
+              Try adjusting your search or filter criteria
+            </p>
           </div>
         )}
       </div>
